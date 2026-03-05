@@ -292,7 +292,6 @@ export default function AIChatModal() {
               >
                 {msg.role === "model" ? (
                   <div className="prose prose-sm prose-p:leading-relaxed prose-headings:font-semibold">
-                    {/* @ts-expect-error react-markdown types mismatch with React 19 */}
                     <ReactMarkdown
                       remarkPlugins={[remarkGfm]}
                       components={markdownComponents}
