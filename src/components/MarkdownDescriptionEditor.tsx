@@ -87,7 +87,12 @@ const MarkdownDescriptionEditor: React.FC<MarkdownDescriptionEditorProps> = ({
     setGenerating(true);
     try {
       const desc = await generateProductDescription(productContext);
-      onChange?.(desc);
+      const disclaimer =
+        '\n\n<u style="color:red; font-weight:bold;">Disclaimer: This is a high-quality replica product, not a genuine original.</u>';
+      const hasDisclaimer = value?.includes("high-quality replica product");
+      const finalDesc = hasDisclaimer ? desc + disclaimer : desc;
+
+      onChange?.(finalDesc);
       toast.success("Description generated!");
     } catch (e: unknown) {
       const err = e as { message?: string };

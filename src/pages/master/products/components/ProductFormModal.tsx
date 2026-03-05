@@ -327,6 +327,9 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                   </span>
                   <Switch
                     size="small"
+                    checked={(form.getFieldValue("description") || "").includes(
+                      "high-quality replica product",
+                    )}
                     onChange={(checked) => {
                       const currentDesc =
                         form.getFieldValue("description") || "";
@@ -338,13 +341,20 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                           !currentDesc.includes("high-quality replica product")
                         ) {
                           form.setFieldsValue({
-                            description: currentDesc + disclaimer,
+                            description: currentDesc.trim()
+                              ? currentDesc.trim() + disclaimer
+                              : disclaimer.trim(),
                           });
+                          toast.success("Disclaimer added");
                         }
                       } else {
                         form.setFieldsValue({
-                          description: currentDesc.replace(disclaimer, ""),
+                          description: currentDesc
+                            .replace(disclaimer, "")
+                            .replace(disclaimer.trim(), "")
+                            .trim(),
                         });
+                        toast.success("Disclaimer removed");
                       }
                     }}
                   />
