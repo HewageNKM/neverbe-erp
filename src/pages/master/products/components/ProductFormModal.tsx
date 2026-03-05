@@ -317,11 +317,40 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 </Col>
               </Row>
 
-              <Form.Item
-                name="description"
-                label="Description"
-                className="mt-4 md:mt-0"
-              >
+              <div className="flex justify-between items-center mt-4 md:mt-0 mb-2">
+                <span className="text-sm font-semibold text-gray-800">
+                  Description
+                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500 font-medium">
+                    Add "Non-Genuine" Disclaimer
+                  </span>
+                  <Switch
+                    size="small"
+                    onChange={(checked) => {
+                      const currentDesc =
+                        form.getFieldValue("description") || "";
+                      const disclaimer =
+                        '\n\n<u style="color:red; font-weight:bold;">Disclaimer: This is a high-quality replica product, not a genuine original.</u>';
+
+                      if (checked) {
+                        if (
+                          !currentDesc.includes("high-quality replica product")
+                        ) {
+                          form.setFieldsValue({
+                            description: currentDesc + disclaimer,
+                          });
+                        }
+                      } else {
+                        form.setFieldsValue({
+                          description: currentDesc.replace(disclaimer, ""),
+                        });
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+              <Form.Item name="description" className="mb-6">
                 <MarkdownDescriptionEditor
                   productContext={{
                     name: watchedName,
