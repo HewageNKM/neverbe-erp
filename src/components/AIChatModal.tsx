@@ -291,13 +291,14 @@ export default function AIChatModal() {
                 }`}
               >
                 {msg.role === "model" ? (
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    components={markdownComponents}
-                    className="prose prose-sm prose-p:leading-relaxed prose-headings:font-semibold"
-                  >
-                    {msg.text}
-                  </ReactMarkdown>
+                  <div className="prose prose-sm prose-p:leading-relaxed prose-headings:font-semibold">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={markdownComponents}
+                    >
+                      {msg.text}
+                    </ReactMarkdown>
+                  </div>
                 ) : (
                   <span>{msg.text}</span>
                 )}
