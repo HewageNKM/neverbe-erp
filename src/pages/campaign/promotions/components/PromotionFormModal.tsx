@@ -125,9 +125,7 @@ const PromotionFormModal: React.FC<Props> = ({
           endDate: parseDate(promotion.endDate),
         });
 
-        if (promotion.bannerUrl) {
-          setBannerPreview(promotion.bannerUrl);
-        }
+        setBannerPreview(promotion.bannerUrl || "");
 
         // Prefetch variants for conditions
         promotion.conditions?.forEach((cond) => {
