@@ -381,6 +381,8 @@ const OrdersPage = () => {
                 <Option value="all">All Sources</Option>
                 <Option value="Store">Store</Option>
                 <Option value="Website">Website</Option>
+                <Option value="Android Web">Android Web</Option>
+                <Option value="iOS Web">iOS Web</Option>
               </Select>
             </Form.Item>
             <Form.Item name="stockId" className="!mb-0 w-40">

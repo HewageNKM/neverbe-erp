@@ -267,28 +267,28 @@ const OrderView = ({ orderId }: { orderId: string }) => {
         />
       )}
 
-      <div className="flex justify-between items-end mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
         <div className="flex items-center gap-3">
           <div className="w-1.5 h-10 bg-green-600 rounded-full" />
           <div className="flex flex-col">
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 leading-none mb-1">
               Order Details
             </span>
-            <h2 className="text-4xl font-black text-gray-900 tracking-tight leading-none">
+            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight leading-none break-all">
               Order #{order?.orderId}
             </h2>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 flex-wrap">
           <Tag
             color={getPaymentStatusColor(order?.paymentStatus)}
-            className="px-4 py-1.5 text-xs font-bold rounded-full border-none uppercase tracking-wider"
+            className="px-4 py-1.5 text-xs font-bold rounded-full border-none uppercase tracking-wider !m-0"
           >
             {order?.paymentStatus}
           </Tag>
           <Tag
             color={getOrderStatusColor(order?.status)}
-            className="px-4 py-1.5 text-xs font-bold rounded-full border-none uppercase tracking-wider"
+            className="px-4 py-1.5 text-xs font-bold rounded-full border-none uppercase tracking-wider !m-0"
           >
             {order?.status}
           </Tag>
@@ -337,18 +337,24 @@ const OrderView = ({ orderId }: { orderId: string }) => {
               },
             }}
           >
-            <Descriptions
-              bordered
-              column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
-              size="small"
-              labelStyle={{
-                fontWeight: 600,
-                background: "#f8fafc",
-                width: "140px",
-              }}
-            >
+            <div className="overflow-x-auto w-full pb-2">
+              <Descriptions
+                bordered
+                column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
+                size="small"
+                layout="horizontal"
+                className="lg:hidden min-w-[max-content]"
+                labelStyle={{
+                  fontWeight: 600,
+                  background: "#f8fafc",
+                  whiteSpace: "nowrap",
+                }}
+                contentStyle={{
+                  whiteSpace: "nowrap",
+                }}
+              >
               <Descriptions.Item label="Payment Method">
-                <Space direction="vertical" size={0}>
+                <Space direction="vertical" size={0} className="w-full whitespace-nowrap">
                   <Text strong>{order?.paymentMethod}</Text>
                   <Text type="secondary" className="text-[10px]">
                     ID: {order?.paymentMethodId}
@@ -358,7 +364,7 @@ const OrderView = ({ orderId }: { orderId: string }) => {
               <Descriptions.Item label="Transaction ID">
                 <Text
                   code
-                  className="bg-green-50 text-green-700 border-green-100"
+                  className="bg-green-50 text-green-700 border-green-100 break-all"
                 >
                   {order?.paymentId || "N/A"}
                 </Text>
@@ -377,7 +383,7 @@ const OrderView = ({ orderId }: { orderId: string }) => {
                 <Tag color="cyan">{order?.from || "-"}</Tag>
               </Descriptions.Item>
               <Descriptions.Item label="Tracking Number">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 whitespace-nowrap">
                   {isEditingTracking ? (
                     <Input
                       size="small"
@@ -410,7 +416,7 @@ const OrderView = ({ orderId }: { orderId: string }) => {
                 </div>
               </Descriptions.Item>
               <Descriptions.Item label="Inventory Location">
-                <Tag color="geekblue">
+                <Tag color="geekblue" className="whitespace-normal h-auto py-1">
                   {stocks.find((s) => s.id === order?.stockId)?.label ||
                     "Unknown"}{" "}
                   ({order?.stockId || "-"})
@@ -428,6 +434,105 @@ const OrderView = ({ orderId }: { orderId: string }) => {
                 )}
               </Descriptions.Item>
             </Descriptions>
+            </div>
+
+            <div className="overflow-x-auto w-full">
+              <Descriptions
+                bordered
+                column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
+                size="small"
+                className="hidden lg:block min-w-full"
+                labelStyle={{
+                  fontWeight: 600,
+                  background: "#f8fafc",
+                  whiteSpace: "nowrap",
+                }}
+                contentStyle={{
+                  whiteSpace: "nowrap",
+                }}
+              >
+              <Descriptions.Item label="Payment Method">
+                <Space direction="vertical" size={0} className="w-full whitespace-nowrap">
+                  <Text strong>{order?.paymentMethod}</Text>
+                  <Text type="secondary" className="text-[10px]">
+                    ID: {order?.paymentMethodId}
+                  </Text>
+                </Space>
+              </Descriptions.Item>
+              <Descriptions.Item label="Transaction ID">
+                <Text
+                  code
+                  className="bg-green-50 text-green-700 border-green-100 break-all"
+                >
+                  {order?.paymentId || "N/A"}
+                </Text>
+              </Descriptions.Item>
+              <Descriptions.Item label="Placement Date">
+                <Text>
+                  {order?.createdAt ? String(order.createdAt) : "N/A"}
+                </Text>
+              </Descriptions.Item>
+              <Descriptions.Item label="Last Update">
+                <Text>
+                  {order?.updatedAt ? String(order.updatedAt) : "N/A"}
+                </Text>
+              </Descriptions.Item>
+              <Descriptions.Item label="Order Source">
+                <Tag color="cyan">{order?.from || "-"}</Tag>
+              </Descriptions.Item>
+              <Descriptions.Item label="Tracking Number">
+                <div className="flex items-center gap-2 whitespace-nowrap">
+                  {isEditingTracking ? (
+                    <Input
+                      size="small"
+                      value={tempTracking}
+                      onChange={(e) => setTempTracking(e.target.value)}
+                      onPressEnter={handleSaveTracking}
+                      className="w-32"
+                    />
+                  ) : (
+                    <Text strong>{order?.trackingNumber || "Not Linked"}</Text>
+                  )}
+                  {isEditingTracking ? (
+                    <AntButton
+                      type="primary"
+                      size="small"
+                      icon={<SaveOutlined />}
+                      onClick={handleSaveTracking}
+                    />
+                  ) : (
+                    <AntButton
+                      type="text"
+                      size="small"
+                      icon={<EditOutlined />}
+                      onClick={() => {
+                        setIsEditingTracking(true);
+                        setTempTracking(order?.trackingNumber || "");
+                      }}
+                    />
+                  )}
+                </div>
+              </Descriptions.Item>
+              <Descriptions.Item label="Inventory Location">
+                <Tag color="geekblue" className="whitespace-normal h-auto py-1">
+                  {stocks.find((s) => s.id === order?.stockId)?.label ||
+                    "Unknown"}{" "}
+                  ({order?.stockId || "-"})
+                </Tag>
+              </Descriptions.Item>
+              <Descriptions.Item label="System Check">
+                {order?.integrity ? (
+                  <Tag color="success" bordered={false}>
+                    INTEGRITY VERIFIED
+                  </Tag>
+                ) : (
+                  <Tag color="error" bordered={false}>
+                    CHECKS FAILED
+                  </Tag>
+                )}
+              </Descriptions.Item>
+            </Descriptions>
+            </div>
 
             {order?.trackingNumber && (
               <Card
