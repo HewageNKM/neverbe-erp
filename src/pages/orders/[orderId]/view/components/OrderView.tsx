@@ -50,7 +50,7 @@ const OrderView = ({ orderId }: { orderId: string }) => {
     try {
       setLoadingTracking(true);
       const res = await api.get(`/api/v1/erp/orders/${id}/tracking`);
-      setTrackingHistory(res.data.history || []);
+      setTrackingHistory(res.data.data.history || []);
     } catch (error) {
       console.error("Failed to fetch tracking history", error);
     } finally {
