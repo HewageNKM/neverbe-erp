@@ -167,6 +167,23 @@ export const OrderEditForm: React.FC<OrderEditFormProps> = ({
                       </Form.Item>
                     </Col>
                   </Row>
+                  <Row gutter={16} className="mt-4">
+                    <Col xs={24} md={12}>
+                      <Form.Item label="Tracking Number" name="trackingNumber">
+                        <Input size="large" placeholder="Enter Tracking Number" />
+                      </Form.Item>
+                    </Col>
+                    <Col xs={24} md={12}>
+                      <Form.Item label="Shipping Courier" name="courier">
+                        <Select size="large" placeholder="Select Courier (e.g., Domex)">
+                          <Select.Option value="Domex">Domex</Select.Option>
+                          <Select.Option value="Certis">Certis</Select.Option>
+                          <Select.Option value="Prompt">Prompt Express</Select.Option>
+                          <Select.Option value="Koombiyo">Koombiyo</Select.Option>
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                  </Row>
                 </Card>
 
                 {/* Customer Information Grid */}

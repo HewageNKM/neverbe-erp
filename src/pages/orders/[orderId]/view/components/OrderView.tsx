@@ -13,10 +13,8 @@ import {
   Alert,
   Spin,
   Timeline,
-  Input,
   Button as AntButton,
 } from "antd";
-import { EditOutlined, SaveOutlined } from "@ant-design/icons";
 
 import { useAIChat } from "@/contexts/AIChatContext";
 
@@ -28,8 +26,6 @@ const OrderView = ({ orderId }: { orderId: string }) => {
   const [loadingOrder, setLoadingOrder] = useState(true);
   const [trackingHistory, setTrackingHistory] = useState<any[]>([]);
   const [loadingTracking, setLoadingTracking] = useState(false);
-  const [isEditingTracking, setIsEditingTracking] = useState(false);
-  const [tempTracking, setTempTracking] = useState("");
   const [stocks, setStocks] = useState<Record<string, any>[]>([]);
 
   const { currentUser } = useAppSelector((state: any) => state.authSlice);
@@ -62,27 +58,6 @@ const OrderView = ({ orderId }: { orderId: string }) => {
     }
   };
 
-  const handleSaveTracking = async () => {
-    if (!order) return;
-    try {
-      const updatedOrder = {
-        ...order,
-        trackingNumber: tempTracking,
-        courier: "Domex",
-      };
-      await api.put(`/api/v1/erp/orders/${order.orderId}`, updatedOrder);
-      setOrder(updatedOrder);
-      setIsEditingTracking(false);
-      toast.success("Tracking number updated");
-      if (tempTracking) {
-        fetchTracking(order.orderId);
-      } else {
-        setTrackingHistory([]);
-      }
-    } catch (error) {
-      toast.error("Failed to update tracking number");
-    }
-  };
 
   useEffect(() => {
     if (currentUser) {
@@ -384,35 +359,7 @@ const OrderView = ({ orderId }: { orderId: string }) => {
               </Descriptions.Item>
               <Descriptions.Item label="Tracking Number">
                 <div className="flex items-center gap-2 whitespace-nowrap">
-                  {isEditingTracking ? (
-                    <Input
-                      size="small"
-                      value={tempTracking}
-                      onChange={(e) => setTempTracking(e.target.value)}
-                      onPressEnter={handleSaveTracking}
-                      className="w-32"
-                    />
-                  ) : (
-                    <Text strong>{order?.trackingNumber || "Not Linked"}</Text>
-                  )}
-                  {isEditingTracking ? (
-                    <AntButton
-                      type="primary"
-                      size="small"
-                      icon={<SaveOutlined />}
-                      onClick={handleSaveTracking}
-                    />
-                  ) : (
-                    <AntButton
-                      type="text"
-                      size="small"
-                      icon={<EditOutlined />}
-                      onClick={() => {
-                        setIsEditingTracking(true);
-                        setTempTracking(order?.trackingNumber || "");
-                      }}
-                    />
-                  )}
+                  <Text strong>{order?.trackingNumber || "Not Linked"}</Text>
                 </div>
               </Descriptions.Item>
               <Descriptions.Item label="Inventory Location">
@@ -482,35 +429,7 @@ const OrderView = ({ orderId }: { orderId: string }) => {
               </Descriptions.Item>
               <Descriptions.Item label="Tracking Number">
                 <div className="flex items-center gap-2 whitespace-nowrap">
-                  {isEditingTracking ? (
-                    <Input
-                      size="small"
-                      value={tempTracking}
-                      onChange={(e) => setTempTracking(e.target.value)}
-                      onPressEnter={handleSaveTracking}
-                      className="w-32"
-                    />
-                  ) : (
-                    <Text strong>{order?.trackingNumber || "Not Linked"}</Text>
-                  )}
-                  {isEditingTracking ? (
-                    <AntButton
-                      type="primary"
-                      size="small"
-                      icon={<SaveOutlined />}
-                      onClick={handleSaveTracking}
-                    />
-                  ) : (
-                    <AntButton
-                      type="text"
-                      size="small"
-                      icon={<EditOutlined />}
-                      onClick={() => {
-                        setIsEditingTracking(true);
-                        setTempTracking(order?.trackingNumber || "");
-                      }}
-                    />
-                  )}
+                  <Text strong>{order?.trackingNumber || "Not Linked"}</Text>
                 </div>
               </Descriptions.Item>
               <Descriptions.Item label="Inventory Location">
