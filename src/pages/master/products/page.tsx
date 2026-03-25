@@ -252,12 +252,44 @@ const ProductPage = () => {
 
     {
       title: "Price (LKR)",
-      dataIndex: "sellingPrice",
       key: "price",
-      align: "right",
-      render: (price) => (
-        <Typography.Text strong>{price?.toLocaleString()}</Typography.Text>
-      ),
+      align: "right" as const,
+      render: (_, record) => {
+        const hasDiscount = (record.discount || 0) > 0;
+        const discountedPrice = hasDiscount
+          ? Math.round(
+              (record.sellingPrice * (100 - (record.discount || 0))) / 100 / 10,
+            ) * 10
+          : record.sellingPrice;
+
+        return (
+          <Space direction="vertical" align="end" size={0}>
+            {hasDiscount && (
+              <Typography.Text
+                delete
+                type="secondary"
+                style={{ fontSize: "10px" }}
+              >
+                {record.sellingPrice?.toLocaleString()}
+              </Typography.Text>
+            )}
+            <Typography.Text
+              strong
+              className={hasDiscount ? "text-green-600" : ""}
+            >
+              {discountedPrice?.toLocaleString()}
+            </Typography.Text>
+            {hasDiscount && (
+              <Tag
+                color="green"
+                className="m-0 text-[9px] font-black px-1 py-0 border-none leading-none mt-0.5"
+              >
+                SAVE {record.discount}%
+              </Tag>
+            )}
+          </Space>
+        );
+      },
     },
     {
       title: "Status",
