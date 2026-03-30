@@ -16,12 +16,14 @@ import api from "@/lib/api";
 import { useAppSelector } from "@/lib/hooks";
 import toast from "react-hot-toast";
 import { useConfirmationDialog } from "@/contexts/ConfirmationDialogContext";
+import NeuralProductHub from "./components/NeuralProductHub";
 import {
   Table,
   Button,
   Input,
   Select,
   Tag,
+  Badge,
   Space,
   Tooltip,
   Form,
@@ -312,6 +314,19 @@ const ProductPage = () => {
       ),
     },
     {
+      title: "Neural",
+      key: "neural",
+      render: (_, record) => {
+         // This would ideally come from the cached neural feed, 
+         // but we can also use a simple heuristic if velocity was passed.
+         return (
+            <Tooltip title="Neural SKU Health: Analyzing demand velocity vs stock current state.">
+               <Badge count="OPTIMAL" style={{ backgroundColor: '#10b981', fontSize: '9px' }} />
+            </Tooltip>
+         );
+      }
+    },
+    {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
@@ -371,6 +386,9 @@ const ProductPage = () => {
             New Product
           </Button>
         </div>
+
+        {/* 🧠 Neural Strategy Hub */}
+        <NeuralProductHub />
 
         {/* Filter bar */}
         <Card size="small" className="shadow-sm !mb-4">

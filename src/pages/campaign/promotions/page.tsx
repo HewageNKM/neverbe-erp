@@ -10,6 +10,7 @@ import PromotionFormModal from "./components/PromotionFormModal"; // Will create
 import toast from "react-hot-toast";
 import { useAppSelector } from "@/lib/hooks";
 import { useConfirmationDialog } from "@/contexts/ConfirmationDialogContext";
+import NeuralPromoAdvisor from "./components/NeuralPromoAdvisor";
 
 const PromotionsPage = () => {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
@@ -159,6 +160,9 @@ const PromotionsPage = () => {
             New Promotion
           </Button>
         </div>
+
+        {/* 🧠 Neural Strategy Hub */}
+        <NeuralPromoAdvisor />
 
         <div className="bg-transparent space-y-4">
           {/* Filter bar */}
