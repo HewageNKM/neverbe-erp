@@ -127,9 +127,9 @@ const HybridIntelligencePanel = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* CHART SECTION */}
-        <div className="lg:col-span-2 relative">
+        <div className="lg:col-span-3 relative">
           {!chartData.length && (
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
               <IconBrain size={48} className="text-gray-300 mb-2" stroke={1} />

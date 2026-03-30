@@ -17,9 +17,11 @@ const Dashboard = () => {
     <PageContainer title="Dashboard" description="System Overview & Analytics">
       <div className="space-y-6">
         {/* HYBRID INTELLIGENCE HUB (ML + LLM) */}
-        <ErrorBoundary fallbackTitle="Intelligence Hub Syncing">
-          <HybridIntelligencePanel />
-        </ErrorBoundary>
+        <div className="mb-8">
+          <ErrorBoundary fallbackTitle="Intelligence Hub Syncing">
+            <HybridIntelligencePanel />
+          </ErrorBoundary>
+        </div>
 
         {/* PREMIUM HEADER */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
