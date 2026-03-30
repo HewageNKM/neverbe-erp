@@ -5,6 +5,7 @@ import { IconMenu2, IconUser, IconLogout } from "@tabler/icons-react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { clearUser } from "@/lib/authSlice/authSlice";
 import Menuitems from "./MenuItems";
+import NeuralPulse from "./NeuralPulse";
 
 const { Sider } = Layout;
 
@@ -143,25 +144,29 @@ const Sidebar = ({
     >
       <div className="flex flex-col h-full">
         {/* Sidebar Header / Logo */}
-        <div className="h-20 flex items-center justify-between px-6 border-b border-gray-100 flex-shrink-0 relative">
+        <div className="h-20 flex items-center justify-between px-6 border-b border-gray-100 flex-shrink-0 relative gap-3">
           {!collapsed ? (
-            <Link
-              to="/dashboard"
-              className="block transform scale-75 origin-left w-20"
-            >
-              <img
-                src="/logo.png"
-                alt="NeverBe Logo"
-                className="w-full h-auto object-contain"
-              />
-            </Link>
+            <div className="flex items-center gap-4 flex-1">
+              <Link
+                to="/dashboard"
+                className="block transform scale-75 origin-left w-20"
+              >
+                <img
+                  src="/logo.png"
+                  alt="NeverBe Logo"
+                  className="w-full h-auto object-contain"
+                />
+              </Link>
+              <NeuralPulse collapsed={false} />
+            </div>
           ) : (
-            <div className="flex justify-center w-16">
+            <div className="flex flex-col items-center justify-center w-full gap-2">
               <img
                 src="/logo.png"
                 alt="NeverBe Logo"
-                className="w-full h-auto object-contain"
+                className="w-10 h-auto object-contain"
               />
+              <NeuralPulse collapsed={true} />
             </div>
           )}
         </div>

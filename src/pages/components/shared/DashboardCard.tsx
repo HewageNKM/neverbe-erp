@@ -31,12 +31,12 @@ const DashboardCard = ({
     <Card
       title={
         displayTitle ? (
-          <div className="flex flex-col py-1">
-            <span className="text-sm font-extrabold uppercase tracking-widest text-gray-800">
+          <div className="flex flex-col py-0">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-950/40 leading-none mb-1">
               {displayTitle}
             </span>
             {displaySubtitle && (
-              <span className="text-xs font-semibold text-gray-400 mt-1 uppercase tracking-wide">
+              <span className="text-[9px] font-bold text-gray-300 mt-0 uppercase tracking-widest leading-none">
                 {displaySubtitle}
               </span>
             )}
@@ -44,9 +44,9 @@ const DashboardCard = ({
         ) : null
       }
       extra={action}
-      className={`h-full shadow-xl shadow-green-900/5 sm:rounded-3xl border border-gray-100 transition-all duration-300 hover:shadow-2xl hover:shadow-green-900/10 ${className || ""}`}
-      style={{ borderRadius: "1.25rem" }}
-      bodyStyle={{ padding: "24px", height: "100%" }}
+      className={`h-full shadow-2xl shadow-emerald-900/5 rounded-[2.5rem] border border-gray-100/50 transition-all duration-500 hover:shadow-emerald-950/10 hover:border-emerald-100 bg-white/80 backdrop-blur-md ${className || ""}`}
+      style={{ borderRadius: "2rem" }}
+      bodyStyle={{ padding: "2rem", height: "100%" }}
       bordered={false}
     >
       <div className="flex flex-col h-full">

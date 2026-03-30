@@ -9,19 +9,21 @@ import OrderStatusPanel from "../components/dashboard/OrderStatusPanel";
 import WeeklyTrends from "../components/dashboard/WeeklyTrends";
 import FinancialHealthPanel from "../components/dashboard/FinancialHealthPanel";
 import RevenueByCategory from "../components/dashboard/RevenueByCategory";
-import HybridIntelligencePanel from "../components/dashboard/HybridIntelligencePanel";
+import NeuroCommandCenter from "../components/dashboard/NeuroCommandCenter";
 import ErrorBoundary from "../../components/common/ErrorBoundary";
 
 const Dashboard = () => {
   return (
-    <PageContainer title="Dashboard" description="System Overview & Analytics">
-      <div className="space-y-6">
-        {/* HYBRID INTELLIGENCE HUB (ML + LLM) */}
-        <div className="mb-8">
-          <ErrorBoundary fallbackTitle="Intelligence Hub Syncing">
-            <HybridIntelligencePanel />
+    <PageContainer title="Neural Dashboard" description="Propulsion Hub & Predictive Analytics">
+      <div className="space-y-10">
+        {/* 🧠 NEURAL CORE: THE SYSTEM PROPULSION HUB */}
+        <div className="mb-0">
+          <ErrorBoundary fallbackTitle="NeuroCenter Syncing">
+            <NeuroCommandCenter />
           </ErrorBoundary>
         </div>
+
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-emerald-100 to-transparent opacity-50" />
 
         {/* PREMIUM HEADER */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
