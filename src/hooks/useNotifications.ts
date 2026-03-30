@@ -20,23 +20,40 @@ export const useNotifications = () => {
 
   // 1. Request Permission and Get Token
   const requestPermission = async () => {
+    let vapidKey: string | undefined;
     try {
       const permission = await Notification.requestPermission();
       if (permission === "granted") {
-        const vapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY;
+        vapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY;
         if (!vapidKey) {
           console.warn("[useNotifications] Missing VITE_FIREBASE_VAPID_KEY. Push notifications will not work.");
           return;
         }
 
-        // Explicitly register service worker to prevent AbortError
+        // 0. Debug log to verify key (first 10 chars)
+        console.log("[useNotifications] Attempting registration with VAPID:", vapidKey.substring(0, 10) + "...");
+
+        // 1. Clean up any existing broken registrations for this scope
         if ('serviceWorker' in navigator) {
-          await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-          const registration = await navigator.serviceWorker.ready; // Wait for it to be ready
-          console.log("[useNotifications] Service Worker ready with scope:", registration.scope);
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (let reg of registrations) {
+            if (reg.active?.scriptURL.includes('firebase-messaging-sw.js')) {
+              console.log("[useNotifications] Cleaning up old worker:", reg.active.scriptURL);
+              await reg.unregister();
+            }
+          }
+
+          // 2. Fresh registration
+          const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+          await navigator.serviceWorker.ready;
+          
+          console.log("[useNotifications] Fresh SW Active. Scope:", registration.scope);
+          
+          // 3. Small delay to let the Push Manager settle (resolves AbortErrors on localhost)
+          await new Promise(resolve => setTimeout(resolve, 500));
           
           const token = await fcmGetToken(messaging, {
-            vapidKey: vapidKey,
+            vapidKey: vapidKey.trim(),
             serviceWorkerRegistration: registration,
           });
           
@@ -48,7 +65,12 @@ export const useNotifications = () => {
         }
       }
     } catch (error: any) {
-      console.error("[useNotifications] Error requesting permission:", error);
+      console.error("[useNotifications] Token Error Details:", {
+        message: error.message,
+        name: error.name,
+        code: error.code,
+        vapidPrefix: vapidKey?.substring(0, 5)
+      });
       if (error.name === 'AbortError') {
         toast.error("Notification registration failed. Please refresh and try again.");
       }
@@ -108,7 +130,7 @@ export const useNotifications = () => {
           id: d.id,
           ...d.data(),
         })) as Notification[];
-        
+
         setNotifications(docs);
         setUnreadCount(docs.filter(n => !n.read).length);
       }, (error) => {
