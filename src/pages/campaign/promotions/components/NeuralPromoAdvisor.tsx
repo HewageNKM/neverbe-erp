@@ -1,30 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Card, Table, Tag, Typography, Space, Button, Badge, Spin } from "antd";
 import { IconBrain, IconReceipt2, IconTrendingDown, IconDiscount2 } from "@tabler/icons-react";
-import api from "@/lib/api";
+import { useNeural } from "@/contexts/NeuralContext";
 
 const { Text, Title } = Typography;
 
 const NeuralPromoAdvisor: React.FC = () => {
-  const [loading, setLoading] = useState(true);
-  const [promoData, setPromoData] = useState<any[]>([]);
-
-  const fetchNeural = async () => {
-    try {
-      const resp = await api.get("/api/v1/erp/ai/neural");
-      if (resp.data.success) {
-        setPromoData(resp.data.data.reality?.promoSuggestions || []);
-      }
-    } catch (err) {
-      console.error("Neural Promo Err", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchNeural();
-  }, []);
+  const { data, loading } = useNeural();
+  const promoData = data?.reality?.promoSuggestions || [];
 
   const columns = [
     {

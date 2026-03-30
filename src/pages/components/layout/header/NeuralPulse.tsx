@@ -1,29 +1,12 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Tooltip, Progress } from "antd";
 import { IconBrain } from "@tabler/icons-react";
-import api from "@/lib/api";
+import { useNeural } from "@/contexts/NeuralContext";
 
 const NeuralPulse = ({ collapsed = false }: { collapsed?: boolean }) => {
-  const [health, setHealth] = useState<number | null>(null);
+  const { data } = useNeural();
+  const health = data?.healthScore || null;
   const navigate = useNavigate();
-
-  const fetchPulse = async () => {
-    try {
-      const resp = await api.get('/api/v1/erp/ai/neural');
-      if (resp.data.success) {
-        setHealth(resp.data.data.healthScore);
-      }
-    } catch (err) {
-      console.error("Neural Pulse Sync Error", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchPulse();
-    const interval = setInterval(fetchPulse, 300000); // 5 mins
-    return () => clearInterval(interval);
-  }, []);
 
   if (health === null) return null;
 

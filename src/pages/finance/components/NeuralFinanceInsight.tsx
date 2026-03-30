@@ -1,14 +1,12 @@
 import React from "react";
 import { Card, Progress, Typography, Space, Badge, Tooltip } from "antd";
 import { IconBrain, IconCash, IconAlertTriangle, IconTrendingUp } from "@tabler/icons-react";
+import { useNeural } from "@/contexts/NeuralContext";
 
 const { Text, Title } = Typography;
 
-interface Props {
-  neuralData: any;
-}
-
-const NeuralFinanceInsight: React.FC<Props> = ({ neuralData }) => {
+const NeuralFinanceInsight: React.FC = () => {
+  const { data: neuralData } = useNeural();
   if (!neuralData) return null;
 
   const score = neuralData.financialResilience || 0;

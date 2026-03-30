@@ -79,7 +79,11 @@ const TOOLTIP_STYLE = {
   itemStyle: { color: "#F9FAFB" },
 };
 
+import NeuralCustomerInsight from "./components/NeuralCustomerInsight";
+import { useNeural } from "@/contexts/NeuralContext";
+
 const CustomerAnalyticsPage = () => {
+  const { data: globalNeural } = useNeural();
   const [form] = Form.useForm();
   const [from, setFrom] = useState(() => {
     const d = new Date();
@@ -324,6 +328,9 @@ const CustomerAnalyticsPage = () => {
             </Space>
           </div>
         </div>
+
+        {/* 🧠 Neural CRM Retention Hub */}
+        <NeuralCustomerInsight />
 
         {loading && (
           <div className="flex justify-center py-24">

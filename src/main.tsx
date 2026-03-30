@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import { store } from "@/lib/store";
 import GlobalProvider from "@/components/GlobalProvider";
 import { ConfirmationDialogProvider } from "@/contexts/ConfirmationDialogContext";
+import { NeuralProvider } from "@/contexts/NeuralContext";
 import { Toaster } from "react-hot-toast";
 import { ConfigProvider } from "antd";
 import App from "./App";
@@ -23,8 +24,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         >
           <GlobalProvider>
             <ConfirmationDialogProvider>
-              <Toaster position="top-right" />
-              <App />
+              <NeuralProvider>
+                 <Toaster position="top-right" />
+                 <App />
+              </NeuralProvider>
             </ConfirmationDialogProvider>
           </GlobalProvider>
         </ConfigProvider>

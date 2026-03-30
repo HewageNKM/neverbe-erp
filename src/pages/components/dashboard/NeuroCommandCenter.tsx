@@ -12,37 +12,15 @@ import {
 import api from "@/lib/api";
 import dayjs from "dayjs";
 import DashboardCard from "../shared/DashboardCard";
+import { useNeural } from "@/contexts/NeuralContext";
 
 const { Text, Title, Paragraph } = Typography;
 
 const NeuroCommandCenter = () => {
    const navigate = useNavigate();
-   const [data, setData] = useState<any>(null);
-   const [loading, setLoading] = useState(true);
-   const [refreshing, setRefreshing] = useState(false);
+   const { data, loading, refreshing, refresh } = useNeural();
 
-   const fetchNeuralCore = async (refresh: boolean = false) => {
-      if (refresh) setRefreshing(refresh);
-      else setLoading(true);
-
-      try {
-         const resp = await api.get(`/api/v1/erp/ai/neural?refresh=${refresh}`);
-         if (resp.data.success) {
-            setData(resp.data.data);
-         }
-      } catch (err) {
-         console.error("Neural Sync Error", err);
-      } finally {
-         setLoading(false);
-         setRefreshing(false);
-      }
-   };
-
-   useEffect(() => {
-      fetchNeuralCore();
-   }, []);
-
-   if (loading) {
+   if (loading && !data) {
       return (
          <DashboardCard className="h-[600px] flex items-center justify-center bg-emerald-950/20">
             <Spin size="large" tip="Orchestrating Neural Intelligence..." />
@@ -61,7 +39,7 @@ const NeuroCommandCenter = () => {
             <Button
                type="link"
                icon={<IconRefresh size={14} />}
-               onClick={() => fetchNeuralCore(true)}
+               onClick={() => refresh(true)}
                className="mt-6 text-emerald-600 hover:text-emerald-500 font-bold"
             >
                PROBE STATUS AGAIN
@@ -148,7 +126,7 @@ const NeuroCommandCenter = () => {
                      <Title level={4} className="text-emerald-950 font-black m-0 mb-1">Neural Forecast Matrix</Title>
                      <Text className="text-[10px] font-black text-gray-400 uppercase tracking-widest">14-Day Trajectory Prediction</Text>
                   </div>
-                  <Button type="text" shape="circle" icon={<IconRefresh className={refreshing ? 'animate-spin' : ''} />} onClick={() => fetchNeuralCore(true)} />
+                  <Button type="text" shape="circle" icon={<IconRefresh className={refreshing ? 'animate-spin' : ''} />} onClick={() => refresh(true)} />
                </div>
 
                <div className="h-[340px] w-full">
