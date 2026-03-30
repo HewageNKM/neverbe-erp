@@ -7,7 +7,11 @@ import {
   IconServer,
   IconWorld,
   IconDeviceDesktop,
+  IconBrain,
+  IconRobot,
 } from "@tabler/icons-react";
+import { functions } from "@/firebase/firebaseClient";
+import { httpsCallable } from "firebase/functions";
 import toast from "react-hot-toast";
 import { useAppSelector } from "@/lib/hooks";
 import {
@@ -22,6 +26,7 @@ import {
   Form,
   Spin,
   Divider,
+  Badge,
 } from "antd";
 
 const { Option } = Select;
@@ -50,6 +55,7 @@ const SettingPage = () => {
   const [stocks, setStocks] = useState<Stock[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [saving, setSaving] = useState<boolean>(false);
+  const [training, setTraining] = useState<boolean>(false);
   const { currentUser } = useAppSelector((state) => state.authSlice);
 
   // Fetch settings
@@ -103,6 +109,23 @@ const SettingPage = () => {
       toast.error(e.message || "FAILED TO SAVE");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleManualTrain = async () => {
+    try {
+      setTraining(true);
+      const triggerFn = httpsCallable(functions, "triggerManualTraining");
+      const result: any = await triggerFn();
+      
+      if (result.data.success) {
+        toast.success("NEURAL ENGINE RE-TRAINED SUCCESSFULLY");
+      }
+    } catch (err: any) {
+      console.error("[Manual Training Error]", err);
+      toast.error(err.message || "Failed to trigger manual training");
+    } finally {
+      setTraining(false);
     }
   };
 
@@ -199,7 +222,7 @@ const SettingPage = () => {
                     <IconDeviceDesktop size={20} /> Platform Modules
                   </Space>
                 }
-                className="h-full"
+                className="mb-6"
               >
                 <div className="flex items-center justify-between py-4">
                   <Space>
@@ -237,6 +260,51 @@ const SettingPage = () => {
                   <Form.Item name="posEnabled" valuePropName="checked" noStyle>
                     <Switch />
                   </Form.Item>
+                </div>
+              </Card>
+
+              {/* Neural Engine Control */}
+              <Card
+                title={
+                  <Space>
+                    <IconBrain size={20} className="text-emerald-600" /> 
+                    <span className="text-emerald-600">Neural Engine Control</span>
+                  </Space>
+                }
+                className="border-emerald-100 bg-emerald-50/10"
+              >
+                <div className="flex flex-col gap-4">
+                  <div>
+                    <Text strong className="block">Intelligence Hub Training</Text>
+                    <Text type="secondary" className="text-xs">
+                      Manually re-train the ML model and regenerate AI advisory. 
+                      This process uses all historical data and takes a few moments.
+                    </Text>
+                  </div>
+                  
+                  <div className="p-4 bg-white rounded-xl border border-emerald-50 flex items-center justify-between">
+                    <div className="flex flex-col">
+                      <Text className="text-[10px] font-black uppercase tracking-widest text-gray-400">Engine Status</Text>
+                      <Space>
+                        <Badge status="processing" color="emerald" />
+                        <Text strong className="text-emerald-700">Operational</Text>
+                      </Space>
+                    </div>
+                    
+                    <Button 
+                      type="primary"
+                      icon={<IconRobot size={18} />}
+                      loading={training}
+                      onClick={handleManualTrain}
+                      className="bg-emerald-600 hover:bg-emerald-700 border-none rounded-lg font-bold"
+                    >
+                      Trigger Manual Training
+                    </Button>
+                  </div>
+                  
+                  <Text type="secondary" className="text-[10px] italic">
+                    Note: Scheduled training runs every hour. Manual training will refresh the cache immediately.
+                  </Text>
                 </div>
               </Card>
             </Col>

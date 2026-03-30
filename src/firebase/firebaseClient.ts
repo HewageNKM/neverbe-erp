@@ -1,6 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getFunctions } from "firebase/functions";
+import { getMessaging, getToken as fcmGetToken, onMessage } from "firebase/messaging";
 
 export { GoogleAuthProvider };
 
@@ -18,6 +20,10 @@ const config = {
 const app = initializeApp(config);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+export const functions = getFunctions(app);
+export const messaging = getMessaging(app);
+
+export { fcmGetToken, onMessage };
 
 export const getToken = async () => {
   try {

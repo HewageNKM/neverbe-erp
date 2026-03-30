@@ -1,17 +1,22 @@
+import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./header/Sidebar";
-import { Layout, Button, Drawer } from "antd";
-import { IconMenu2 } from "@tabler/icons-react";
-import { useState } from "react";
+import { Layout, Button, Drawer, Badge, Tooltip } from "antd";
+import { IconMenu2, IconBell, IconSettings } from "@tabler/icons-react";
 import AppBreadcrumb from "./AppBreadcrumb";
 import { AIChatProvider } from "@/contexts/AIChatContext";
 import AIChatModal from "../../../components/AIChatModal";
+import NotificationPanel from "./header/NotificationPanel";
+import { useNotifications } from "@/hooks/useNotifications";
+import api from "@/lib/api";
 
 const { Content } = Layout;
 
 export default function AppLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(true);
+  const { unreadCount, requestPermission, fcmToken } = useNotifications();
   const [hoverTimeout, setHoverTimeout] = useState<ReturnType<
     typeof setTimeout
   > | null>(null);
@@ -46,6 +51,23 @@ export default function AppLayout() {
     }
   };
 
+  // Push Permission & Topic Subscription
+  useEffect(() => {
+    const enrollNotifications = async () => {
+      // 1. Request permission and get token
+      await requestPermission();
+    };
+    enrollNotifications();
+  }, []);
+
+  // Subscribe token to topic once obtained
+  useEffect(() => {
+    if (fcmToken) {
+      api.post("/api/v1/erp/notifications/subscribe", { token: fcmToken })
+         .catch(err => console.warn("Failed to subscribe token on server", err));
+    }
+  }, [fcmToken]);
+
   return (
     <AIChatProvider>
       <Layout className="min-h-screen bg-[#f9fafb] text-black font-sans selection:bg-black selection:text-white flex-row overflow-x-hidden">
@@ -67,21 +89,37 @@ export default function AppLayout() {
           {/* Global Brand Accent */}
           <div className="w-full h-1 bg-black fixed top-0 z-[100] left-0"></div>
 
-          {/* Mobile Header (Only visible on lg < screens) */}
-          <header className="lg:hidden sticky top-0 bg-white border-b-2 border-gray-200 h-16 flex items-center justify-between px-4 z-40">
-            <Button
-              type="text"
-              icon={<IconMenu2 size={24} />}
-              onClick={() => setMobileMenuOpen(true)}
-            />
-            <div className="w-12">
-              <img
-                src="/logo.png"
-                alt="Logo"
-                className="w-full h-auto object-contain"
+          <header className="sticky top-0 bg-white border-b-2 border-gray-200 h-16 flex items-center justify-between px-4 z-40">
+            <div className="flex items-center gap-4">
+              <Button
+                type="text"
+                icon={<IconMenu2 size={24} />}
+                onClick={() => setMobileMenuOpen(true)}
+                className="lg:hidden"
               />
+              <div className="hidden lg:block w-8"></div>
             </div>
-            <div className="w-8"></div> {/* Spacer for centering */}
+
+            <div className="flex items-center gap-4">
+              <Tooltip title="Notifications">
+                <div 
+                  className="p-2 hover:bg-gray-100 rounded-full cursor-pointer transition-colors"
+                  onClick={() => setNotificationOpen(true)}
+                >
+                  <Badge count={unreadCount} size="small" offset={[2, 0]}>
+                    <IconBell size={22} className="text-gray-600" />
+                  </Badge>
+                </div>
+              </Tooltip>
+
+              <div className="w-10 h-10 lg:w-12 lg:h-12 border-2 border-white shadow-sm overflow-hidden rounded-full">
+                <img
+                  src="/logo.png"
+                  alt="Logo"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            </div>
           </header>
 
           {/* Mobile Drawer Sidebar */}
@@ -118,6 +156,12 @@ export default function AppLayout() {
 
         {/* Global AI Chat Modal */}
         <AIChatModal />
+
+        {/* Global Notification Panel */}
+        <NotificationPanel 
+          open={notificationOpen} 
+          onClose={() => setNotificationOpen(false)} 
+        />
       </Layout>
     </AIChatProvider>
   );
