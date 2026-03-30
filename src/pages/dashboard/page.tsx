@@ -10,15 +10,16 @@ import WeeklyTrends from "../components/dashboard/WeeklyTrends";
 import FinancialHealthPanel from "../components/dashboard/FinancialHealthPanel";
 import RevenueByCategory from "../components/dashboard/RevenueByCategory";
 import HybridIntelligencePanel from "../components/dashboard/HybridIntelligencePanel";
+import ErrorBoundary from "../../components/common/ErrorBoundary";
 
 const Dashboard = () => {
   return (
     <PageContainer title="Dashboard" description="System Overview & Analytics">
       <div className="space-y-6">
         {/* HYBRID INTELLIGENCE HUB (ML + LLM) */}
-        <div>
+        <ErrorBoundary fallbackTitle="Intelligence Hub Syncing">
           <HybridIntelligencePanel />
-        </div>
+        </ErrorBoundary>
 
         {/* PREMIUM HEADER */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
