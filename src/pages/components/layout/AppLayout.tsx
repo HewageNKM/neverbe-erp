@@ -112,13 +112,6 @@ export default function AppLayout() {
                 </div>
               </Tooltip>
 
-              <div className="w-10 h-10 lg:w-12 lg:h-12 border-2 border-white shadow-sm overflow-hidden rounded-full">
-                <img
-                  src="/logo.png"
-                  alt="Logo"
-                  className="w-full h-full object-contain"
-                />
-              </div>
             </div>
           </header>
 
