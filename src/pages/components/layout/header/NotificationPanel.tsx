@@ -166,15 +166,67 @@ export default function NotificationPanel({ open, onClose }: Props) {
                       >
                         {item.message}
                       </Text>
-                      {isLong && (
+                      
+                      {isExpanded && item.metadata && (
+                         <div className="mt-4 p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100/50 animate-in fade-in slide-in-from-top-2 duration-300">
+                            <span className="text-[9px] font-black text-emerald-800 uppercase tracking-widest mb-3 block opacity-60">Neural Deep Analysis</span>
+                            <div className="grid grid-cols-2 gap-4">
+                               {item.metadata.sku && (
+                                  <div className="flex flex-col">
+                                     <span className="text-[7px] font-black text-gray-400 uppercase tracking-widest">SKU Trace</span>
+                                     <span className="text-[10px] font-black text-gray-700 font-mono">{item.metadata.sku}</span>
+                                  </div>
+                               )}
+                               {item.metadata.daysRemaining !== undefined && (
+                                  <div className="flex flex-col">
+                                     <span className="text-[7px] font-black text-gray-400 uppercase tracking-widest">Est. Depletion</span>
+                                     <span className="text-[10px] font-black text-red-600 italic">{item.metadata.daysRemaining} Days</span>
+                                  </div>
+                               )}
+                               {item.metadata.revenueRisk && (
+                                  <div className="flex flex-col">
+                                     <span className="text-[7px] font-black text-gray-400 uppercase tracking-widest">Value at Risk</span>
+                                     <span className="text-[10px] font-black text-emerald-950">Rs. {Number(item.metadata.revenueRisk).toLocaleString()}</span>
+                                  </div>
+                               )}
+                               {item.metadata.riskLevel && (
+                                  <div className="flex flex-col">
+                                     <span className="text-[7px] font-black text-gray-400 uppercase tracking-widest">Confidence</span>
+                                     <span className="text-[10px] font-black text-emerald-600">HIGH (Neural Matrix)</span>
+                                  </div>
+                               )}
+                            </div>
+                            <Button 
+                              type="link" 
+                              size="small" 
+                              onClick={(e) => { e.stopPropagation(); navigate("/inventory/purchase-orders"); onClose(); }}
+                              className="p-0 h-auto text-[9px] font-black uppercase mt-4 text-emerald-600 hover:text-emerald-700 tracking-widest flex items-center gap-1"
+                            >
+                               Initiate Strategic Reorder <IconExternalLink size={10} />
+                            </Button>
+                         </div>
+                      )}
+
+                      {isLong && !isExpanded && (
                         <Button 
                           type="link" 
                           size="small" 
                           className="p-0 h-auto text-[10px] font-black uppercase mt-3 text-emerald-600 hover:text-emerald-700 tracking-widest flex items-center gap-1"
                           onClick={(e) => toggleExpand(e, item.id)}
                         >
-                          {isExpanded ? "Show Less" : "Deep Analysis"}
+                          Deep Analysis
                         </Button>
+                      )}
+
+                      {isExpanded && (
+                         <Button 
+                           type="link" 
+                           size="small" 
+                           className="p-0 h-auto text-[10px] font-black uppercase mt-3 text-gray-400 hover:text-gray-600 tracking-widest flex items-center gap-1"
+                           onClick={(e) => toggleExpand(e, item.id)}
+                         >
+                           Show Less
+                         </Button>
                       )}
                     </div>
                     
