@@ -47,7 +47,7 @@ const DailyEarnings = () => {
       <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center mb-6 min-w-0 gap-2">
         <div className="flex items-center gap-2 overflow-hidden">
           <h4 className="text-lg font-bold text-black truncate">
-            Daily Snapshot
+            Daily Overview
           </h4>
           <Button
             type="text"

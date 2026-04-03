@@ -43,7 +43,7 @@ const MonthlyComparison = () => {
     <DashboardCard>
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
-          <h4 className="text-lg font-bold text-black m-0">Monthly</h4>
+          <h4 className="text-lg font-bold text-black m-0">Monthly Comparison</h4>
           <Button
             type="text"
             shape="circle"

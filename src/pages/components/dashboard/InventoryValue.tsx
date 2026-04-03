@@ -62,19 +62,18 @@ const InventoryValue = () => {
             >
               <Statistic
                 title={
-                  <span className="text-[10px] font-bold text-green-100 uppercase tracking-widest">
+                  <span className="text-[10px] font-bold text-green-700 uppercase tracking-widest">
                     Total Stock Value
                   </span>
                 }
                 value={data.totalValue}
                 precision={2}
                 prefix={
-                  <span className="text-sm font-bold text-green-200 mr-1 uppercase">
+                  <span className="text-sm font-bold text-green-700 mr-1 uppercase">
                     LKR
                   </span>
                 }
                 valueStyle={{
-                  color: "#fff",
                   fontWeight: "900",
                   fontSize: "1.5rem",
                 }}

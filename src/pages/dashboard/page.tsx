@@ -12,6 +12,7 @@ import ExpenseSummary from "../components/dashboard/ExpenseSummary";
 import ProfitMargins from "../components/dashboard/ProfitMargins";
 import InventoryValue from "../components/dashboard/InventoryValue";
 import RevenueByCategory from "../components/dashboard/RevenueByCategory";
+import NeuralStrategicHub from "../components/dashboard/NeuralStrategicHub";
 
 const Dashboard = () => {
   return (
@@ -25,6 +26,11 @@ const Dashboard = () => {
           <div className="md:col-span-1">
             <MonthlyComparison />
           </div>
+        </div>
+
+        {/* 🤖 NEURAL STRATEGIC HUB (AI/ML LAYER) */}
+        <div className="py-2">
+           <NeuralStrategicHub />
         </div>
 
         {/* Row 2: Sales Chart + Order Status Panel (combined donut + attention) */}

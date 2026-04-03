@@ -99,7 +99,9 @@ const NeuralStrategicHub = () => {
                   <div className="flex items-center gap-8 pt-4 border-t border-gray-100">
                      <div className="flex flex-col">
                         <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Sales Momentum</span>
-                        <span className="text-xl font-black text-emerald-600">+{data?.reality?.comparison?.percentageChange?.revenue || 0}%</span>
+                        <span className={`text-xl font-black ${(data?.reality?.comparison?.percentageChange?.revenue || 0) >= 0 ? "text-emerald-600" : "text-rose-500"}`}>
+                           {(data?.reality?.comparison?.percentageChange?.revenue || 0) >= 0 ? "+" : ""}{data?.reality?.comparison?.percentageChange?.revenue || 0}%
+                        </span>
                      </div>
                      <div className="flex flex-col">
                         <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Neural Accuracy</span>
@@ -162,8 +164,10 @@ const NeuralStrategicHub = () => {
                   <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">Profit Delta</span>
                </div>
                <div className="flex items-center gap-2">
-                  <span className="text-2xl font-black text-emerald-950">+{data.reality.comparison.percentageChange.profit}%</span>
-                  <Tag color="blue" bordered={false} className="m-0 text-[10px] font-black rounded-full px-2">MONTHLY</Tag>
+                  <span className={`text-2xl font-black ${(data.reality.comparison.percentageChange.profit || 0) >= 0 ? "text-emerald-950" : "text-rose-500"}`}>
+                     {(data.reality.comparison.percentageChange.profit || 0) >= 0 ? "+" : ""}{data.reality.comparison.percentageChange.profit || 0}%
+                  </span>
+                  <Tag color={(data.reality.comparison.percentageChange.profit || 0) >= 0 ? "blue" : "red"} bordered={false} className="m-0 text-[10px] font-black rounded-full px-2">MONTHLY</Tag>
                </div>
                <span className="text-[10px] font-bold text-gray-400 uppercase mt-1 block">Vs Last Month Performance</span>
             </DashboardCard>
