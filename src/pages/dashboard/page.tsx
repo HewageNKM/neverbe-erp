@@ -1,4 +1,5 @@
 import PageContainer from "../components/container/PageContainer";
+// components
 import SalesOverview from "../components/dashboard/SalesOverview";
 import RecentTransactions from "../components/dashboard/RecentTransactions";
 import DailyEarnings from "../components/dashboard/DailyEarnings";
@@ -7,54 +8,66 @@ import LowStockAlerts from "../components/dashboard/LowStockAlerts";
 import MonthlyComparison from "../components/dashboard/MonthlyComparison";
 import OrderStatusPanel from "../components/dashboard/OrderStatusPanel";
 import WeeklyTrends from "../components/dashboard/WeeklyTrends";
-import FinancialHealthPanel from "../components/dashboard/FinancialHealthPanel";
+import ExpenseSummary from "../components/dashboard/ExpenseSummary";
+import ProfitMargins from "../components/dashboard/ProfitMargins";
+import InventoryValue from "../components/dashboard/InventoryValue";
 import RevenueByCategory from "../components/dashboard/RevenueByCategory";
-import NeuralStrategicHub from "../components/dashboard/NeuralStrategicHub";
-import ErrorBoundary from "../../components/common/ErrorBoundary";
-import { useNeural } from "@/contexts/NeuralContext";
 
 const Dashboard = () => {
   return (
-    <PageContainer title="Neural Dashboard" description="Propulsion Hub & Predictive Analytics">
-      <div className="space-y-10">
-        {/* PREMIUM HEADER */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-0 gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-1.5 h-10 bg-green-600 rounded-full" />
-            <div className="flex flex-col">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 leading-none mb-1">
-                System Overview
-              </span>
-              <h2 className="text-4xl font-black text-gray-900 tracking-tight leading-none">
-                Dashboard
-              </h2>
-            </div>
+    <PageContainer title="Dashboard" description="This is the Dashboard">
+      <div className="flex flex-col gap-6">
+        {/* Row 1: Key Metrics - Daily + Monthly */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="md:col-span-2">
+            <DailyEarnings />
+          </div>
+          <div className="md:col-span-1">
+            <MonthlyComparison />
           </div>
         </div>
 
-        <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-100 to-transparent opacity-50 my-4" />
-
-        {/* layer 0: The Neural Strategy Command */}
-        <div className="grid grid-cols-1 gap-10">
-          <ErrorBoundary fallbackTitle="Strategic Hub Syncing">
-             <NeuralStrategicHub />
-          </ErrorBoundary>
+        {/* Row 2: Sales Chart + Order Status Panel (combined donut + attention) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+          <div className="md:col-span-2">
+            <SalesOverview />
+          </div>
+          <div className="md:col-span-1 xl:col-span-2">
+            <OrderStatusPanel />
+          </div>
         </div>
 
-        {/* Layer 2: Strategic Deep Dive (Charts & Resilience) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          <SalesOverview />
-          <FinancialHealthPanel />
+        {/* Row 3: Weekly Trends + Financial 3-col */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+          <div>
+            <WeeklyTrends />
+          </div>
+          <div>
+            <ProfitMargins />
+          </div>
+          <div>
+            <ExpenseSummary />
+          </div>
+          <div>
+            <InventoryValue />
+          </div>
         </div>
 
-        {/* Layer 3: Inventory Intelligence (Risks & Performance) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          <RevenueByCategory />
-          <PopularItems />
+        {/* Row 4: Category Revenue + Popular Items + Low Stock */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div>
+            <RevenueByCategory />
+          </div>
+          <div>
+            <PopularItems />
+          </div>
+          <div>
+            <LowStockAlerts />
+          </div>
         </div>
 
-        {/* 📜 The Audit Trail */}
-        <div className="pt-8 border-t border-gray-100/50">
+        {/* Row 5: Recent Activity - Full width */}
+        <div>
           <RecentTransactions />
         </div>
       </div>

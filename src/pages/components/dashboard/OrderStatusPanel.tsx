@@ -8,6 +8,7 @@ import {
 import toast from "react-hot-toast";
 import {
   IconChartPie,
+  IconRefresh,
   IconClock,
   IconTruck,
   IconAlertCircle,
@@ -20,7 +21,7 @@ interface StatusData {
   pending: number;
   processing: number;
   shipped: number;
-  completed: number;
+  delivered: number;
   cancelled: number;
   refunded: number;
 }
@@ -60,7 +61,7 @@ const OrderStatusPanel = () => {
 
   const chartOptions: ApexCharts.ApexOptions = {
     chart: { type: "donut", fontFamily: "inherit" },
-    labels: ["Pending", "Completed", "Cancelled", "Refunded"],
+    labels: ["Pending", "Delivered", "Cancelled", "Refunded"],
     colors: ["#fbbf24", "#10b981", "#ef4444", "#8b5cf6"],
     legend: {
       position: "bottom",
@@ -118,7 +119,7 @@ const OrderStatusPanel = () => {
   const series = statusData
     ? [
         statusData.pending,
-        statusData.completed,
+        statusData.delivered,
         statusData.cancelled,
         statusData.refunded,
       ]
@@ -131,6 +132,13 @@ const OrderStatusPanel = () => {
         <div className="flex items-center gap-2">
           <IconChartPie size={18} className="text-purple-500" />
           <h4 className="text-lg font-bold text-black m-0">Order Status</h4>
+          <Button
+            type="text"
+            shape="circle"
+            icon={<IconRefresh size={14} />}
+            onClick={fetchAll}
+            loading={loading}
+          />
         </div>
         <Tag className="m-0 text-xs font-bold text-gray-500 bg-gray-100 border-none">
           This Month
@@ -176,14 +184,14 @@ const OrderStatusPanel = () => {
                   {pendingData.pendingPayment}
                 </p>
               </div>
-              <div className="p-3 border-green-100 bg-green-50 rounded-2xl hover:-translate-y-0.5 transition-all">
+              <div className="p-3 border border-blue-100 bg-blue-50 rounded-2xl hover:-translate-y-0.5 transition-all">
                 <div className="flex items-center gap-2 mb-1">
-                  <IconTruck size={13} className="text-green-600" />
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-green-700">
+                  <IconTruck size={13} className="text-blue-600" />
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700">
                     To Ship
                   </span>
                 </div>
-                <p className="text-xl font-bold text-green-700 m-0">
+                <p className="text-xl font-bold text-blue-700 m-0">
                   {pendingData.pendingShipment}
                 </p>
               </div>
