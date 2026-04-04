@@ -85,7 +85,7 @@ const BannerForm = ({ onSuccess }: { onSuccess: (newBanner: any) => void }) => {
       img.src = URL.createObjectURL(file);
       img.onload = () => {
         setImageResolution(`${img.width}x${img.height}`);
-        const MARGIN = 50;
+        const MARGIN = 150;
         const isWidthValid = Math.abs(img.width - 1200) <= MARGIN;
         const isHeightValid = Math.abs(img.height - 628) <= MARGIN;
 
@@ -190,13 +190,14 @@ const BannerForm = ({ onSuccess }: { onSuccess: (newBanner: any) => void }) => {
                       {isLoading ? "Validating..." : "Click or Drag & Drop"}
                     </Title>
                     <Text type="secondary" className="block text-xs font-mono">
-                      REQ: ~1200x628px (±50px) | MAX: 20MB
+                      REQ: ~1200x628px (±150px) | MAX: 20MB
                     </Text>
                   </div>
                 </div>
               )}
             </label>
           </div>
+
 
           <Row justify="space-between" align="middle" className="pt-2">
             <Col>
