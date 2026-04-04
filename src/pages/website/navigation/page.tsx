@@ -206,12 +206,13 @@ const NavigationPage = () => {
               status={!mainNavValid ? "error" : ""}
               spellCheck="false"
               placeholder='[ { "title": "Home", "link": "/" } ]'
-              className="font-mono text-xs flex-1 min-h-[400px]"
+              className="font-mono text-xs flex-1 min-h-[600px]"
               style={{
                 backgroundColor: "#1e1e1e",
                 color: "#d4d4d4",
                 borderRadius: "8px",
                 resize: "none",
+                minHeight: 600,
               }}
             />
           </Card>
@@ -253,12 +254,13 @@ const NavigationPage = () => {
               status={!footerNavValid ? "error" : ""}
               spellCheck="false"
               placeholder='[ { "title": "About", "link": "/about" } ]'
-              className="font-mono text-xs flex-1 min-h-[400px]"
+              className="font-mono text-xs flex-1 min-h-[600px]"
               style={{
                 backgroundColor: "#1e1e1e",
                 color: "#d4d4d4",
                 borderRadius: "8px",
                 resize: "none",
+                minHeight: 600,
               }}
             />
           </Card>
@@ -300,12 +302,13 @@ const NavigationPage = () => {
               status={!socialLinksValid ? "error" : ""}
               spellCheck="false"
               placeholder='[ { "name": "facebook", "url": "https://facebook.com/yourpage" } ]'
-              className="font-mono text-xs flex-1 min-h-[400px]"
+              className="font-mono text-xs flex-1 min-h-[600px]"
               style={{
                 backgroundColor: "#1e1e1e",
                 color: "#d4d4d4",
                 borderRadius: "8px",
                 resize: "none",
+                minHeight: 600,
               }}
             />
             <Text type="secondary" className="text-xs mt-3 block">
