@@ -37,7 +37,8 @@ const BannerCard = ({
     <Card
       hoverable
       cover={
-        <div className="relative aspect-1200/628 w-full overflow-hidden bg-gray-50">
+        <div className="relative aspect-1400/628 w-full overflow-hidden bg-gray-50">
+
           <img
             src={banner.url}
             alt="Banner Asset"
@@ -86,11 +87,13 @@ const BannerForm = ({ onSuccess }: { onSuccess: (newBanner: any) => void }) => {
       img.onload = () => {
         setImageResolution(`${img.width}x${img.height}`);
         const MARGIN = 150;
-        const isWidthValid = Math.abs(img.width - 1200) <= MARGIN;
+        const isWidthValid = Math.abs(img.width - 1400) <= MARGIN;
+
         const isHeightValid = Math.abs(img.height - 628) <= MARGIN;
 
         if (!isWidthValid || !isHeightValid) {
-          return reject(`INVALID DIMENSIONS: REQUIRED ~1200x628px (±${MARGIN}px)`);
+          return reject(`INVALID DIMENSIONS: REQUIRED ~1400x628px (±${MARGIN}px)`);
+
         }
         resolve();
       };
@@ -151,7 +154,8 @@ const BannerForm = ({ onSuccess }: { onSuccess: (newBanner: any) => void }) => {
       <form onSubmit={handleSubmit} className="w-full">
         <Space direction="vertical" size="large" className="w-full">
           <div
-            className={`w-full aspect-1200/628 rounded-lg border-2 border-dashed flex items-center justify-center cursor-pointer relative overflow-hidden transition-all group ${
+            className={`w-full aspect-1400/628 rounded-lg border-2 border-dashed flex items-center justify-center cursor-pointer relative overflow-hidden transition-all group ${
+
               selectedFile
                 ? "border-gray-200 bg-green-50/10"
                 : "border-gray-200 hover:border-gray-200 hover:bg-gray-50/50"
@@ -190,7 +194,7 @@ const BannerForm = ({ onSuccess }: { onSuccess: (newBanner: any) => void }) => {
                       {isLoading ? "Validating..." : "Click or Drag & Drop"}
                     </Title>
                     <Text type="secondary" className="block text-xs font-mono">
-                      REQ: ~1200x628px (±150px) | MAX: 20MB
+                      REQ: ~1400x628px (±150px) | MAX: 20MB
                     </Text>
                   </div>
                 </div>
