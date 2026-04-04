@@ -148,7 +148,8 @@ const MarkdownDescriptionEditor: React.FC<MarkdownDescriptionEditorProps> = ({
           icon={generating ? <Spin size="small" /> : <IconSparkles size={13} />}
           onClick={handleGenerateAI}
           disabled={disabled || generating}
-          className="flex items-center gap-1 text-xs font-black uppercase tracking-widest bg-emerald-600 hover:bg-emerald-700 border-none shadow-lg shadow-emerald-100 h-8 px-4 rounded-xl transition-all hover:scale-[1.02]"
+          className="flex items-center gap-1 text-xs font-black uppercase tracking-widest bg-green-600 hover:bg-green-700 border-none shadow-lg shadow-green-100 h-8 px-4 rounded-xl transition-all hover:scale-[1.02]"
+
         >
           {generating ? "ORCHESTRATING..." : "Generate with AI"}
         </Button>
