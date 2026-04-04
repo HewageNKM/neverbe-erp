@@ -141,9 +141,10 @@ export default function AIChatModal() {
             transition-all duration-300 ease-in-out
             ${
               open
-                ? "bg-black text-white scale-100 rotate-90"
-                : "bg-black text-white hover:scale-110 hover:shadow-green-500/30"
+                ? "bg-emerald-600 text-white scale-100 rotate-90"
+                : "bg-emerald-600 text-white hover:scale-110 hover:shadow-emerald-500/30"
             }
+
           `}
           aria-label={open ? "Close AI Chat" : "Open AI Chat"}
         >
@@ -170,7 +171,7 @@ export default function AIChatModal() {
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-white shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-black rounded-xl flex items-center justify-center">
+            <div className="w-9 h-9 bg-emerald-600 rounded-xl flex items-center justify-center">
               <IconSparkles size={18} stroke={1.5} className="text-white" />
             </div>
             <div>
@@ -179,7 +180,8 @@ export default function AIChatModal() {
               </p>
               <p className="m-0 text-[10px] text-gray-400 font-medium">
                 Context:{" "}
-                <span className="text-black font-semibold">{contextTitle}</span>
+                <span className="text-emerald-700 font-semibold">{contextTitle}</span>
+
               </p>
             </div>
           </div>
@@ -264,7 +266,8 @@ export default function AIChatModal() {
                     onClick={() => {
                       setInput(suggestion);
                     }}
-                    className="text-xs px-3 py-1.5 rounded-full border border-gray-200 text-gray-600 hover:border-black hover:text-black transition-colors bg-white hover:bg-gray-50 font-medium"
+                    className="text-xs px-3 py-1.5 rounded-full border border-gray-200 text-gray-600 hover:border-emerald-600 hover:text-emerald-600 transition-colors bg-white hover:bg-emerald-50 font-medium"
+
                   >
                     {suggestion}
                   </button>
@@ -279,15 +282,16 @@ export default function AIChatModal() {
               className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
             >
               {msg.role === "model" && (
-                <div className="w-7 h-7 bg-black rounded-full flex items-center justify-center shrink-0 mr-2 mt-0.5">
+                <div className="w-7 h-7 bg-emerald-600 rounded-full flex items-center justify-center shrink-0 mr-2 mt-0.5">
                   <IconSparkles size={13} stroke={1.5} className="text-white" />
                 </div>
               )}
               <div
                 className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                   msg.role === "user"
-                    ? "bg-black text-white rounded-br-sm"
+                    ? "bg-emerald-600 text-white rounded-br-sm shadow-lg shadow-emerald-100"
                     : "bg-gray-50 text-gray-800 rounded-bl-sm border border-gray-100"
+
                 }`}
               >
                 {msg.role === "model" ? (
@@ -323,7 +327,8 @@ export default function AIChatModal() {
 
         {/* Input Area */}
         <div className="px-4 py-3 border-t border-gray-100 bg-white shrink-0">
-          <div className="flex items-end gap-2 bg-gray-50 rounded-2xl px-4 py-2 border border-gray-200 focus-within:border-black focus-within:bg-white transition-all">
+          <div className="flex items-end gap-2 bg-gray-50 rounded-2xl px-4 py-2 border border-gray-200 focus-within:border-emerald-500 focus-within:bg-white transition-all">
+
             <Input.TextArea
               id="ai-chat-input"
               value={input}
@@ -342,8 +347,9 @@ export default function AIChatModal() {
               disabled={!input.trim() || loading}
               className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all mb-0.5 ${
                 input.trim() && !loading
-                  ? "bg-black text-white hover:scale-105"
+                  ? "bg-emerald-600 text-white hover:scale-105 shadow-md shadow-emerald-100"
                   : "bg-gray-200 text-gray-400 cursor-not-allowed"
+
               }`}
             >
               <IconSend size={15} stroke={2} />
