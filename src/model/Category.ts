@@ -4,6 +4,8 @@ export interface Category {
   name: string;
   description?: string;
   status: boolean;
+  isFeatured?: boolean;
+  imageUrl?: string;
   isDeleted?: boolean;
   createdAt?: Timestamp | string;
   updatedAt?: Timestamp | string;

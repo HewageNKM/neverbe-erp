@@ -164,8 +164,27 @@ const Menuitems = [
     id: uniqueId(),
     title: "Website Manager",
     icon: IconWorld,
-    href: "/website",
     permission: "view_website",
+    children: [
+      {
+        id: uniqueId(),
+        title: "Banners",
+        href: "/website/banner",
+        permission: "view_website",
+      },
+      {
+        id: uniqueId(),
+        title: "Collections",
+        href: "/website/collections",
+        permission: "view_website",
+      },
+      {
+        id: uniqueId(),
+        title: "Navigation",
+        href: "/website/navigation",
+        permission: "view_website",
+      },
+    ],
   },
   {
     subHeader: "Reports",

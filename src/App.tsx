@@ -121,6 +121,8 @@ const RoleEdit = lazy(() => import("@/pages/roles/[id]/page"));
 const Website = lazy(() => import("@/pages/website/page"));
 const Banner = lazy(() => import("@/pages/website/banner/page"));
 const Navigation = lazy(() => import("@/pages/website/navigation/page"));
+const Collections = lazy(() => import("@/pages/website/collections/page"));
+
 
 // Profile
 const Profile = lazy(() => import("@/pages/profile/page"));
@@ -277,6 +279,8 @@ export default function App() {
           <Route path="website" element={<Website />} />
           <Route path="website/banner" element={<Banner />} />
           <Route path="website/navigation" element={<Navigation />} />
+          <Route path="website/collections" element={<Collections />} />
+
 
           {/* Profile */}
           <Route path="profile" element={<Profile />} />
