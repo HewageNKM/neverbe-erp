@@ -392,11 +392,10 @@ const OrderInvoice = () => {
 
                 {/* Item Discounts (combo discounts, sale prices) */}
                 {(() => {
-                  const totalDiscount = Number(order.discount) || 0;
-                  const couponDiscount = Number(order.couponDiscount) || 0;
-                  const promoDiscount = Number(order.promotionDiscount) || 0;
-                  const itemDiscounts =
-                    totalDiscount - couponDiscount - promoDiscount;
+                  const itemDiscounts = order.items.reduce(
+                    (acc, item) => acc + (Number(item.discount) || 0),
+                    0
+                  );
 
                   if (itemDiscounts > 0) {
                     return (

@@ -86,11 +86,15 @@ const OrderView = ({ orderId }: { orderId: string }) => {
     }
   };
 
-  const subtotal =
-    (order?.total || 0) +
-    (order?.discount || 0) -
-    (order?.shippingFee || 0) -
-    (order?.fee || 0);
+  const subtotal = order?.items?.reduce(
+    (acc, item) => acc + ((item.price || 0) * (item.quantity || 1)),
+    0
+  ) || 0;
+
+  const itemDiscounts = order?.items?.reduce(
+    (acc, item) => acc + (item.discount || 0),
+    0
+  ) || 0;
 
   const fee = order?.fee || 0;
   const shippingFee = order?.shippingFee || 0;
@@ -534,13 +538,13 @@ const OrderView = ({ orderId }: { orderId: string }) => {
                 </Text>
               </div>
 
-              {(order?.discount || 0) > 0 && (
+              {((order?.discount || 0) + itemDiscounts) > 0 && (
                 <div className="flex justify-between items-center">
                   <Text className="text-red-500 text-sm font-medium">
-                    Total Discount
+                    Item Discounts & Coupons
                   </Text>
                   <Text className="text-red-500 font-bold">
-                    - {(order?.discount || 0).toLocaleString()} LKR
+                    - {((order?.discount || 0) + itemDiscounts).toLocaleString()} LKR
                   </Text>
                 </div>
               )}
