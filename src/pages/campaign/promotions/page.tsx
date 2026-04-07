@@ -11,6 +11,8 @@ import toast from "react-hot-toast";
 import { useAppSelector } from "@/lib/hooks";
 import { useConfirmationDialog } from "@/contexts/ConfirmationDialogContext";
 import NeuralPromoAdvisor from "./components/NeuralPromoAdvisor";
+import dayjs from "dayjs";
+
 
 const PromotionsPage = () => {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
@@ -130,6 +132,34 @@ const PromotionsPage = () => {
       },
     });
   };
+  
+  const handleApplyStrategy = (suggestion: any) => {
+    const draft: any = {
+      name: `AI RECO: ${suggestion.name} Liquidity Boost`,
+      description: `Neural strategy to optimize liquidity for ${suggestion.name} by clearing stagnant stock.`,
+      type: "PERCENTAGE",
+      isActive: true,
+      startDate: dayjs(),
+      endDate: dayjs().add(7, "day"),
+      conditions: [
+        {
+          type: "SPECIFIC_PRODUCT",
+          value: suggestion.productId,
+        },
+      ],
+      actions: [
+        {
+          type: "PERCENTAGE_OFF",
+          value: suggestion.recommendedDiscount,
+        },
+      ],
+      stackable: false,
+      priority: 5,
+    };
+    setEditingItem(draft);
+    setIsModalOpen(true);
+  };
+
 
   return (
     <PageContainer
@@ -162,7 +192,8 @@ const PromotionsPage = () => {
         </div>
 
         {/* 🧠 Neural Strategy Hub */}
-        <NeuralPromoAdvisor />
+        <NeuralPromoAdvisor onApply={handleApplyStrategy} />
+
 
         <div className="bg-transparent space-y-4">
           {/* Filter bar */}

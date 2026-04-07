@@ -5,7 +5,12 @@ import { useNeural } from "@/contexts/NeuralContext";
 
 const { Text, Title } = Typography;
 
-const NeuralPromoAdvisor: React.FC = () => {
+interface Props {
+  onApply?: (suggestion: any) => void;
+}
+
+const NeuralPromoAdvisor: React.FC<Props> = ({ onApply }) => {
+
   const { data, loading } = useNeural();
   const promoData = data?.reality?.promoSuggestions || [];
 
@@ -48,19 +53,27 @@ const NeuralPromoAdvisor: React.FC = () => {
     {
       title: "Strategy",
       key: "action",
-      render: () => (
-        <Button size="small" type="link" icon={<IconDiscount2 size={16} />} className="text-emerald-600 font-bold p-0">
+      render: (_: any, record: any) => (
+        <Button 
+          size="small" 
+          type="link" 
+          icon={<IconDiscount2 size={16} />} 
+          className="text-emerald-600 font-bold p-0"
+          onClick={() => onApply?.(record)}
+        >
           Apply Strategy
         </Button>
       ),
     },
+
   ];
 
   if (loading) return <div className="h-40 flex items-center justify-center bg-white rounded-3xl"><Spin /></div>;
 
   return (
     <Card 
-      className="mb-8 border-none shadow-xl overflow-hidden" 
+      className="mb-14 border-none shadow-xl overflow-hidden" 
+
       style={{ 
         background: "rgba(255, 255, 255, 0.9)", 
         backdropFilter: "blur(20px)",
@@ -90,7 +103,9 @@ const NeuralPromoAdvisor: React.FC = () => {
             size="small"
             className="neural-table"
             rowKey="productId"
+            scroll={{ x: 600 }}
           />
+
         </div>
 
         <div className="w-full md:w-72 bg-emerald-600/5 p-6 rounded-3xl border border-emerald-500/10 flex flex-col justify-between">
