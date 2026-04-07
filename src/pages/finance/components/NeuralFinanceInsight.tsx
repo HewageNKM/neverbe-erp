@@ -22,11 +22,12 @@ const NeuralFinanceInsight: React.FC = () => {
 
   return (
     <Card 
-      className="mb-8 border-none shadow-xl relative overflow-hidden" 
+      className="mb-14 border-none shadow-xl relative overflow-hidden" 
       style={{ 
-        background: "linear-gradient(135deg, #064e3b 0%, #022c22 100%)",
+        background: "linear-gradient(135deg, #065f46 0%, #059669 100%)",
         borderRadius: "24px"
       }}
+
     >
       {/* Decorative Glow */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full -mr-32 -mt-32 blur-3xl animate-pulse" />
@@ -68,8 +69,9 @@ const NeuralFinanceInsight: React.FC = () => {
           </div>
 
           {/* Right: Insights */}
-          <div className="flex-1 bg-white/5 p-6 rounded-3xl border border-white/10 backdrop-blur-md">
-            <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="flex-1 bg-white/5 p-4 md:p-6 rounded-3xl border border-white/10 backdrop-blur-md">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+
                <div className="p-4 bg-white/5 rounded-2xl">
                   <div className="flex items-center gap-2 mb-1">
                      <IconCash size={14} className="text-emerald-400" />
