@@ -294,6 +294,17 @@ const ProductPage = () => {
       },
     },
     {
+      title: "Quantity",
+      dataIndex: "totalStock",
+      key: "quantity",
+      align: "center" as const,
+      render: (stock: number) => (
+        <span className={`font-black ${stock > 0 ? "text-emerald-600" : "text-red-500"}`}>
+          {stock || 0} Units
+        </span>
+      ),
+    },
+    {
       title: "Status",
       dataIndex: "status",
       key: "status",
