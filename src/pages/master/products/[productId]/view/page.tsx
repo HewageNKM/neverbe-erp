@@ -21,6 +21,8 @@ import {
 import dayjs from "dayjs";
 
 const { Text } = Typography;
+
+import {
   IconChevronLeft,
   IconEdit,
   IconTag,
@@ -762,7 +764,6 @@ const ProductViewPage = () => {
             </Card>
           </div>
         </div>
-      </div>
 
       <style>{`
         .variant-table .ant-table-thead > tr > th {
