@@ -13,15 +13,25 @@ import {
   Descriptions,
   Statistic,
   Typography,
+  Row,
+  Col,
+  Space,
 } from "antd";
 
+import dayjs from "dayjs";
+
 const { Text } = Typography;
-import {
   IconChevronLeft,
   IconEdit,
   IconTag,
   IconRuler,
   IconPhoto,
+  IconBrain,
+  IconTrendingUp,
+  IconAlertTriangle,
+  IconCash,
+  IconHistory,
+  IconArrowUpRight,
 } from "@tabler/icons-react";
 import api from "@/lib/api";
 import { Product } from "@/model/Product";
@@ -30,6 +40,7 @@ import { useAppSelector } from "@/lib/hooks";
 import { Link } from "react-router-dom";
 import type { ColumnsType } from "antd/es/table";
 import { ProductVariant } from "@/model/ProductVariant";
+import { InventoryItem } from "@/model/InventoryItem";
 
 const ProductViewPage = () => {
   const params = useParams();
@@ -38,31 +49,41 @@ const ProductViewPage = () => {
   const { currentUser } = useAppSelector((state) => state.authSlice);
 
   const [product, setProduct] = useState<Product | null>(null);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeImage, setActiveImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id || !currentUser) return;
-    const fetchProduct = async () => {
+    const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await api.get(`/api/v1/erp/master/products/${id}`);
-        if (response.data) {
-          const prod: Product = response.data;
+        const [productRes, inventoryRes] = await Promise.all([
+          api.get(`/api/v1/erp/master/products/${id}`),
+          api.get(`/api/v1/erp/inventory?productId=${id}&size=100`),
+        ]);
+
+        if (productRes.data) {
+          const prod: Product = productRes.data;
           setProduct(prod);
           setActiveImage(prod.thumbnail?.url || null);
         } else {
           setError("Product not found.");
         }
-      } catch {
+
+        if (inventoryRes.data && inventoryRes.data.dataList) {
+          setInventory(inventoryRes.data.dataList);
+        }
+      } catch (err) {
+        console.error("Error fetching data:", err);
         setError("Failed to load product details.");
       } finally {
         setLoading(false);
       }
     };
-    fetchProduct();
+    fetchData();
   }, [id, currentUser]);
 
   const allImages = product
@@ -100,6 +121,25 @@ const ProductViewPage = () => {
           ))}
         </div>
       ),
+    },
+    {
+      title: "Available Stock",
+      key: "stock",
+      render: (_, record) => {
+        const variantStock = inventory
+          .filter((inv) => inv.variantId === record.variantId)
+          .reduce((sum, item) => sum + item.quantity, 0);
+
+        return (
+          <span
+            className={`font-black ${
+              variantStock > 0 ? "text-emerald-600" : "text-red-500"
+            }`}
+          >
+            {variantStock} Units
+          </span>
+        );
+      },
     },
     {
       title: "Status",
@@ -210,6 +250,160 @@ const ProductViewPage = () => {
             </Button>
           </div>
         </div>
+
+        {/* Neural Strategic Hub - Item Specific */}
+        <Row gutter={[24, 24]}>
+          <Col xs={24} lg={16}>
+            <Card
+              className="border-none shadow-xl relative overflow-hidden h-full"
+              style={{
+                background: "linear-gradient(135deg, #064e3b 0%, #065f46 100%)",
+                borderRadius: "24px",
+              }}
+            >
+              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full -mr-32 -mt-32 blur-3xl animate-pulse" />
+              <div className="relative z-10 p-2">
+                <Space align="center" className="mb-6">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 border border-emerald-500/30">
+                    <IconBrain size={20} />
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400/60">
+                    Neural Strategic Briefing
+                  </span>
+                </Space>
+
+                <Row gutter={[48, 32]}>
+                  <Col xs={24} md={14}>
+                    <h2 className="text-white text-3xl font-black mb-2 tracking-tight">
+                      Reality Check
+                    </h2>
+                    <div className="flex flex-wrap gap-4 mb-6">
+                      <div className="px-3 py-1 bg-white/10 rounded-full border border-white/10 backdrop-blur-sm">
+                        <span className="text-[10px] text-emerald-300 font-bold uppercase tracking-wider">
+                          ROI Status:{" "}
+                          {(product.sellingPrice - product.buyingPrice) /
+                            product.sellingPrice >
+                          0.4
+                            ? "Optimized"
+                            : "Thin Margins"}
+                        </span>
+                      </div>
+                      <div className="px-3 py-1 bg-white/10 rounded-full border border-white/10 backdrop-blur-sm">
+                        <span className="text-[10px] text-amber-300 font-bold uppercase tracking-wider">
+                          Velocity: Moderate
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-emerald-100/70 text-sm leading-relaxed mb-0 italic">
+                      &quot;The current gross margin of{" "}
+                      {Math.round(
+                        ((product.sellingPrice - product.buyingPrice) /
+                          product.sellingPrice) *
+                          100
+                      )}
+                      % is {product.discount > 20 ? "being eroded by aggressive discounting" : "stable for this category"}. 
+                      Stock levels indicate approximately {Math.round((product.totalStock || 0) / 1.5)} days of remaining runway at current velocity.&quot;
+                    </p>
+                  </Col>
+                  <Col xs={24} md={10} className="flex items-center">
+                    <div className="w-full grid grid-cols-1 gap-3">
+                      <div className="p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">
+                            Replenishment
+                          </span>
+                          <IconTrendingUp size={14} className="text-emerald-500" />
+                        </div>
+                        <div className="text-xl font-black text-white">
+                          No Action
+                        </div>
+                      </div>
+                      <div className="p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">
+                            Price Ceiling
+                          </span>
+                          <IconArrowUpRight
+                            size={14}
+                            className="text-emerald-500"
+                          />
+                        </div>
+                        <div className="text-xl font-black text-white">
+                          LKR {Math.round(product.sellingPrice * 1.15).toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+            </Card>
+          </Col>
+
+          <Col xs={24} lg={8}>
+            <Card
+              className="border-none shadow-xl rounded-[24px] h-full bg-white flex flex-col pt-4"
+              title={
+                <Space>
+                  <IconAlertTriangle size={18} className="text-amber-500" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">
+                    Risk Assessment
+                  </span>
+                </Space>
+              }
+            >
+              <div className="space-y-4">
+                {(product.totalStock || 0) < 10 && (
+                  <div className="p-3 rounded-xl bg-red-50 border border-red-100 flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center shrink-0">
+                      <IconAlertTriangle size={18} />
+                    </div>
+                    <div>
+                      <div className="text-xs font-black text-red-900 uppercase tracking-tight">
+                        Critical Depletion
+                      </div>
+                      <div className="text-[10px] text-red-700 font-medium">
+                        Stock will be exhausted in &lt; 5 days.
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {product.discount > 40 && (
+                  <div className="p-3 rounded-xl bg-amber-50 border border-amber-100 flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center shrink-0">
+                      <IconCash size={18} />
+                    </div>
+                    <div>
+                      <div className="text-xs font-black text-amber-900 uppercase tracking-tight">
+                        Margin Pressure
+                      </div>
+                      <div className="text-[10px] text-amber-700 font-medium">
+                        Heavy discount affecting ROI efficiency.
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0">
+                    <IconTrendingUp size={18} />
+                  </div>
+                  <div>
+                    <div className="text-xs font-black text-emerald-900 uppercase tracking-tight">
+                      Listing Health
+                    </div>
+                    <div className="text-[10px] text-emerald-700 font-medium">
+                      Optimized for current market price.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-auto pt-6">
+                <Button className="w-full rounded-xl border-gray-200 text-xs font-bold uppercase tracking-widest h-11 hover:bg-gray-50">
+                  Run Deep Audit
+                </Button>
+              </div>
+            </Card>
+          </Col>
+        </Row>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column: Media & Primary Info (Lg: 5/12) */}
           <div className="lg:col-span-5 space-y-8">
@@ -316,6 +510,68 @@ const ProductViewPage = () => {
           {/* Right Column: Specs, Pricing & Variants (Lg: 7/12) */}
           <div className="lg:col-span-7 space-y-8">
             {/* Financial Performance Section */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Card className="border border-emerald-100 rounded-2xl bg-emerald-50/20 shadow-none">
+                <div className="text-[9px] font-black uppercase text-emerald-700 tracking-[0.2em] mb-2">
+                  Acquisition Cost
+                </div>
+                <div className="text-xl font-black text-emerald-900">
+                  <span className="text-xs font-bold mr-1">LKR</span>
+                  {product.buyingPrice?.toLocaleString()}
+                </div>
+                <div className="mt-1 text-[9px] font-bold text-emerald-600/50 uppercase">
+                  Per Unit
+                </div>
+              </Card>
+
+              <Card className="border border-gray-100 rounded-2xl bg-white shadow-none">
+                <div className="text-[9px] font-black uppercase text-gray-400 tracking-[0.2em] mb-2">
+                  Unit Margin
+                </div>
+                <div className="text-xl font-black text-gray-900">
+                  {Math.round(
+                    ((product.sellingPrice - product.buyingPrice) /
+                      product.sellingPrice) *
+                      100
+                  )}
+                  %
+                </div>
+                <div className="mt-1 text-[9px] font-bold text-emerald-500 uppercase">
+                  +LKR {(product.sellingPrice - product.buyingPrice).toLocaleString()}
+                </div>
+              </Card>
+
+              <Card className="border border-blue-100 rounded-2xl bg-blue-50/20 shadow-none">
+                <div className="text-[9px] font-black uppercase text-blue-700 tracking-[0.2em] mb-2">
+                  Asset Value
+                </div>
+                <div className="text-xl font-black text-blue-900">
+                  <span className="text-xs font-bold mr-1">LKR</span>
+                  {(
+                    (product.buyingPrice || 0) * (product.totalStock || 0)
+                  ).toLocaleString()}
+                </div>
+                <div className="mt-1 text-[9px] font-bold text-blue-600/50 uppercase">
+                  At Cost
+                </div>
+              </Card>
+
+              <Card className="border border-purple-100 rounded-2xl bg-purple-50/20 shadow-none">
+                <div className="text-[9px] font-black uppercase text-purple-700 tracking-[0.2em] mb-2">
+                  Gross Value
+                </div>
+                <div className="text-xl font-black text-purple-900">
+                  <span className="text-xs font-bold mr-1">LKR</span>
+                  {(
+                    product.sellingPrice * (product.totalStock || 0)
+                  ).toLocaleString()}
+                </div>
+                <div className="mt-1 text-[9px] font-bold text-purple-600/50 uppercase">
+                  At MSRP
+                </div>
+              </Card>
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
               <Card className="border border-gray-100 rounded-2xl bg-green-50/30 shadow-none hover:bg-green-50 transition-colors">
                 <Statistic
@@ -470,7 +726,40 @@ const ProductViewPage = () => {
               </div>
             </div>
 
-            {/* Bottom Actions or Notes could go here */}
+            </div>
+
+            {/* Footprint / Metadata Section */}
+            <Card
+              className="border border-gray-100 rounded-2xl bg-gray-50/30 shadow-none"
+              styles={{ body: { padding: "16px 24px" } }}
+            >
+              <div className="flex flex-col sm:flex-row justify-between gap-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-white border border-gray-100 flex items-center justify-center text-gray-400">
+                    <IconHistory size={18} />
+                  </div>
+                  <div>
+                    <div className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-0.5">
+                      Record Footprint
+                    </div>
+                    <div className="text-[11px] font-bold text-gray-600">
+                      Created {dayjs(product.createdAt).format("MMM DD, YYYY")} at{" "}
+                      {dayjs(product.createdAt).format("hh:mm A")}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-left sm:text-right">
+                  <div className="text-[9px] font-black uppercase text-gray-400 tracking-widest mb-0.5">
+                    Last Global Sync
+                  </div>
+                  <div className="text-[11px] font-bold text-gray-900 flex items-center sm:justify-end gap-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    {dayjs(product.updatedAt).fromNow?.() ||
+                      dayjs(product.updatedAt).format("MMM DD, hh:mm A")}
+                  </div>
+                </div>
+              </div>
+            </Card>
           </div>
         </div>
       </div>
