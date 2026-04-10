@@ -191,8 +191,8 @@ const NeuralStrategicHub = () => {
                   </div>
                   <div className="w-px h-8 bg-gray-100" />
                   <div className="flex flex-col">
-                     <span className="text-2xl font-black text-emerald-900">{data.reality.orderStats?.shipped || 0}</span>
-                     <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest">Shipped</span>
+                     <span className="text-2xl font-black text-emerald-900">{data.reality.orderStats?.completed || 0}</span>
+                     <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest">Completed</span>
                   </div>
                </div>
             </DashboardCard>

@@ -95,6 +95,7 @@ export enum orderStatus {
   PENDING = "Pending",
   PROCESSING = "Processing",
   COMPLETED = "Completed",
+  CANCELLED = "Cancelled",
 }
 
 export enum paymentStatus {

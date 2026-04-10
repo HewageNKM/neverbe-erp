@@ -10,7 +10,7 @@ import {
   IconChartPie,
   IconRefresh,
   IconClock,
-  IconTruck,
+  IconChecklist,
   IconAlertCircle,
 } from "@tabler/icons-react";
 import { Button, Spin, Tag } from "antd";
@@ -20,15 +20,13 @@ const Chart = lazy(() => import("react-apexcharts"));
 interface StatusData {
   pending: number;
   processing: number;
-  shipped: number;
-  delivered: number;
+  completed: number;
   cancelled: number;
-  refunded: number;
 }
 
 interface PendingData {
   pendingPayment: number;
-  pendingShipment: number;
+  pendingFulfillment: number;
   total: number;
 }
 
@@ -61,8 +59,8 @@ const OrderStatusPanel = () => {
 
   const chartOptions: ApexCharts.ApexOptions = {
     chart: { type: "donut", fontFamily: "inherit" },
-    labels: ["Pending", "Delivered", "Cancelled", "Refunded"],
-    colors: ["#fbbf24", "#10b981", "#ef4444", "#8b5cf6"],
+    labels: ["Pending", "Processing", "Completed", "Cancelled"],
+    colors: ["#fbbf24", "#3b82f6", "#10b981", "#ef4444"],
     legend: {
       position: "bottom",
       fontFamily: "inherit",
@@ -119,9 +117,9 @@ const OrderStatusPanel = () => {
   const series = statusData
     ? [
         statusData.pending,
-        statusData.delivered,
+        statusData.processing,
+        statusData.completed,
         statusData.cancelled,
-        statusData.refunded,
       ]
     : [];
 
@@ -186,13 +184,13 @@ const OrderStatusPanel = () => {
               </div>
               <div className="p-3 border border-blue-100 bg-blue-50 rounded-2xl hover:-translate-y-0.5 transition-all">
                 <div className="flex items-center gap-2 mb-1">
-                  <IconTruck size={13} className="text-blue-600" />
+                  <IconChecklist size={13} className="text-blue-600" />
                   <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700">
-                    To Ship
+                    To Fulfill
                   </span>
                 </div>
                 <p className="text-xl font-bold text-blue-700 m-0">
-                  {pendingData.pendingShipment}
+                  {pendingData.pendingFulfillment}
                 </p>
               </div>
             </div>

@@ -12,10 +12,8 @@ const Chart = lazy(() => import("react-apexcharts"));
 interface StatusData {
   pending: number;
   processing: number;
-  shipped: number;
   completed: number;
   cancelled: number;
-  refunded: number;
 }
 
 const OrderStatusDistribution = () => {
@@ -45,8 +43,8 @@ const OrderStatusDistribution = () => {
       type: "donut",
       fontFamily: "inherit",
     },
-    labels: ["Pending", "Completed", "Cancelled", "Refunded"],
-    colors: ["#fbbf24", "#10b981", "#ef4444", "#8b5cf6"], // Yellow, Green, Red, Purple
+    labels: ["Pending", "Processing", "Completed", "Cancelled"],
+    colors: ["#fbbf24", "#3b82f6", "#10b981", "#ef4444"], // Yellow, Blue, Green, Red
     legend: {
       position: "bottom",
       fontFamily: "inherit",
@@ -108,7 +106,7 @@ const OrderStatusDistribution = () => {
   };
 
   const series = data
-    ? [data.pending, data.completed, data.cancelled, data.refunded]
+    ? [data.pending, data.processing, data.completed, data.cancelled]
     : [];
 
   return (

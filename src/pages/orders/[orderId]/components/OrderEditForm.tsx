@@ -9,6 +9,7 @@ import {
   Space,
   Divider,
   Alert,
+  Popconfirm,
 } from "antd";
 import api from "@/lib/api";
 import React, { useState, useEffect } from "react";
@@ -137,6 +138,9 @@ export const OrderEditForm: React.FC<OrderEditFormProps> = ({
                           </Select.Option>
                           <Select.Option value="Completed">
                             COMPLETED
+                          </Select.Option>
+                          <Select.Option value="Cancelled">
+                            CANCELLED
                           </Select.Option>
                         </Select>
                       </Form.Item>
@@ -340,17 +344,25 @@ export const OrderEditForm: React.FC<OrderEditFormProps> = ({
                   <Divider className="my-0" />
 
                   <Space direction="vertical" className="w-full" size="middle">
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      block
-                      size="large"
-                      loading={isSubmitting}
-                      className="h-14 font-bold text-base shadow-lg shadow-green-100"
-                      style={{ background: "#16a34a", borderColor: "#16a34a" }}
+                    <Popconfirm
+                      title="Update Order"
+                      description="Are you sure you want to update this order?"
+                      onConfirm={() => form.submit()}
+                      okText="Yes, Update"
+                      cancelText="Cancel"
+                      okButtonProps={{ style: { background: '#16a34a', borderColor: '#16a34a' } }}
                     >
-                      Commit Changes
-                    </Button>
+                      <Button
+                        type="primary"
+                        block
+                        size="large"
+                        loading={isSubmitting}
+                        className="h-14 font-bold text-base shadow-lg shadow-green-100"
+                        style={{ background: "#16a34a", borderColor: "#16a34a" }}
+                      >
+                        Update Changes
+                      </Button>
+                    </Popconfirm>
                     <Button
                       block
                       size="large"
@@ -367,7 +379,7 @@ export const OrderEditForm: React.FC<OrderEditFormProps> = ({
                   </Space>
 
                   <p className="text-[10px] text-gray-400 text-center px-4 leading-relaxed">
-                    By committing these changes, the order state and customer
+                    By updating these changes, the order state and customer
                     data will be permanently updated. Detailed history will be
                     recorded for audit purposes.
                   </p>
