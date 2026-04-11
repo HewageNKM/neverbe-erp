@@ -22,6 +22,7 @@ export interface Order {
   stockId?: string;
   integrity: boolean;
   paymentReceived?: Payment[];
+  sendNotification?: boolean;
 
   // Promotion & Coupon tracking
   couponCode?: string;
