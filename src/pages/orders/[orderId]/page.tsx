@@ -8,7 +8,6 @@ import PageContainer from "../../components/container/PageContainer";
 import DashboardCard from "../../components/shared/DashboardCard";
 import { useAppSelector } from "@/lib/hooks";
 import { OrderEditForm } from "./components/OrderEditForm";
-import { OrderExchangeHistory } from "./components/OrderExchangeHistory";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom"; // Use Next.js Link instead of MUI
 
@@ -74,7 +73,6 @@ const OrderEditPage = () => {
     <PageContainer title={`Edit Order #${order.orderId}`} loading={loading}>
       <div className="w-full flex flex-col gap-8">
         <OrderEditForm order={order} onRefresh={fetchOrder} />
-        <OrderExchangeHistory orderId={param.orderId || order.orderId} />
       </div>
     </PageContainer>
   );
