@@ -176,6 +176,31 @@ const OrdersPage = () => {
     handleFilterSubmit({});
   };
 
+  const handleInlineUpdate = async (orderId: string, field: "status" | "paymentStatus", value: string) => {
+    try {
+      setIsBulkLoading(true);
+      const payload: any = { [field]: value };
+      
+      // If updating status, default notification logic applies
+      if (field === "status") {
+        payload.sendNotification = true;
+      } else {
+        payload.sendNotification = false; // No notification for payment updates
+      }
+
+      const fd = new FormData();
+      fd.append("data", JSON.stringify(payload));
+      await api.put(`/api/v1/erp/orders/${orderId}`, fd);
+      
+      toast.success(`${field.toUpperCase()} updated for #${orderId}`);
+      fetchOrders();
+    } catch (error) {
+      toast.error("Failed to update status");
+    } finally {
+      setIsBulkLoading(false);
+    }
+  };
+
   const handleSingleRowUpdate = async (orderId: string) => {
     try {
       setIsBulkLoading(true);
@@ -375,7 +400,22 @@ const OrdersPage = () => {
       align: "center" as const,
       render: (_: any, order: Order) => (
         <div className="flex flex-col items-center">
-          <Tag color={getStatusTagColor(order.paymentStatus, "payment")} className="rounded-full text-[10px] font-black">{order.paymentStatus || "N/A"}</Tag>
+          {isProcessingView ? (
+            <Select
+              size="small"
+              value={order.paymentStatus}
+              className="w-24 text-[10px] uppercase"
+              onChange={(val) => handleInlineUpdate(order.orderId, "paymentStatus", val)}
+              style={{ color: getStatusTagColor(order.paymentStatus, "payment") === 'success' ? '#166534' : '#1e293b' }}
+            >
+              <Option value="Pending">PENDING</Option>
+              <Option value="Paid">PAID</Option>
+              <Option value="Failed">FAILED</Option>
+              <Option value="Refunded">REFUNDED</Option>
+            </Select>
+          ) : (
+            <Tag color={getStatusTagColor(order.paymentStatus, "payment")} className="rounded-full text-[10px] font-black">{order.paymentStatus || "N/A"}</Tag>
+          )}
           <span className="text-[10px] text-gray-400 mt-1 uppercase font-bold">{order.paymentMethod || "—"}</span>
         </div>
       ),
@@ -391,7 +431,23 @@ const OrdersPage = () => {
       title: "Status",
       key: "status",
       align: "center" as const,
-      render: (_: any, order: Order) => <Tag color={getStatusTagColor(order.status, "order")} className="rounded-full text-[10px] font-black uppercase">{order.status}</Tag>,
+      render: (_: any, order: Order) => (
+        isPaymentPendingView ? (
+          <Select
+            size="small"
+            value={order.status}
+            className="w-28 text-[10px] uppercase"
+            onChange={(val) => handleInlineUpdate(order.orderId, "status", val)}
+          >
+            <Option value="Pending">PENDING</Option>
+            <Option value="Processing">PROCESSING</Option>
+            <Option value="Completed">COMPLETED</Option>
+            <Option value="Cancelled">CANCELLED</Option>
+          </Select>
+        ) : (
+          <Tag color={getStatusTagColor(order.status, "order")} className="rounded-full text-[10px] font-black uppercase">{order.status}</Tag>
+        )
+      ),
     }] : []),
     {
       title: "Check",
