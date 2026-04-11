@@ -11,6 +11,7 @@ import {
   IconSettings,
   IconShield,
   IconRobot,
+  IconMessage2,
 } from "@tabler/icons-react";
 import { uniqueId } from "lodash";
 
@@ -85,8 +86,12 @@ const Menuitems = [
     id: uniqueId(),
     title: "Orders",
     icon: IconShoppingCart,
-    href: "/orders",
     permission: "view_orders",
+    children: [
+      { id: uniqueId(), title: "All Orders", href: "/orders/all" },
+      { id: uniqueId(), title: "Processing", href: "/orders/processing" },
+      { id: uniqueId(), title: "Payment Pending", href: "/orders/payment-pending" },
+    ],
   },
   {
     id: uniqueId(),
@@ -250,6 +255,12 @@ const Menuitems = [
         title: "Tax Settings",
         href: "/settings/tax",
         permission: "view_tax_settings",
+      },
+      {
+        id: uniqueId(),
+        title: "SMS Templates",
+        href: "/settings/templates",
+        permission: "view_settings",
       },
     ],
   },

@@ -110,6 +110,7 @@ const PaymentMethods = lazy(
 const Shipping = lazy(() => import("@/pages/settings/shipping/page"));
 const TaxSettings = lazy(() => import("@/pages/settings/tax/page"));
 const AISettings = lazy(() => import("@/pages/settings/ai/page"));
+const TemplatesSettings = lazy(() => import("@/pages/settings/templates/page"));
 
 // Users & Roles
 const Users = lazy(() => import("@/pages/users/page"));
@@ -126,6 +127,9 @@ const Collections = lazy(() => import("@/pages/website/collections/page"));
 
 // Profile
 const Profile = lazy(() => import("@/pages/profile/page"));
+
+// Communications
+const Communications = lazy(() => import("@/pages/communications/page"));
 
 function Loading() {
   return (
@@ -159,7 +163,10 @@ export default function App() {
           <Route path="dashboard" element={<Dashboard />} />
 
           {/* Orders */}
-          <Route path="orders" element={<Orders />} />
+          <Route path="orders" element={<Navigate to="/orders/all" replace />} />
+          <Route path="orders/all" element={<Orders />} />
+          <Route path="orders/processing" element={<Orders />} />
+          <Route path="orders/payment-pending" element={<Orders />} />
           <Route path="orders/:orderId" element={<OrderDetail />} />
           <Route path="orders/:orderId/view" element={<OrderView />} />
           <Route path="orders/:orderId/invoice" element={<OrderInvoice />} />
@@ -268,6 +275,7 @@ export default function App() {
           <Route path="settings/shipping" element={<Shipping />} />
           <Route path="settings/tax" element={<TaxSettings />} />
           <Route path="settings/ai" element={<AISettings />} />
+          <Route path="settings/templates" element={<TemplatesSettings />} /> 
 
           {/* Users & Roles */}
           <Route path="users" element={<Users />} />
@@ -284,6 +292,9 @@ export default function App() {
 
           {/* Profile */}
           <Route path="profile" element={<Profile />} />
+
+          {/* Communications */}
+          <Route path="communications" element={<Communications />} />
 
           {/* Fallback inner match */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />

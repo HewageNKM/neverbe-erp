@@ -9,7 +9,6 @@ import DashboardCard from "../../components/shared/DashboardCard";
 import { useAppSelector } from "@/lib/hooks";
 import { OrderEditForm } from "./components/OrderEditForm";
 import { OrderExchangeHistory } from "./components/OrderExchangeHistory";
-import CommunicationHub from "./components/CommunicationHub";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom"; // Use Next.js Link instead of MUI
 
@@ -76,7 +75,6 @@ const OrderEditPage = () => {
       <div className="w-full flex flex-col gap-8">
         <OrderEditForm order={order} onRefresh={fetchOrder} />
         <OrderExchangeHistory orderId={order.orderId} />
-        <CommunicationHub orderId={order.orderId} customerName={order.customer?.name} />
       </div>
     </PageContainer>
   );

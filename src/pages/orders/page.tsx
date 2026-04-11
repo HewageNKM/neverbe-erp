@@ -1,6 +1,6 @@
 import api from "@/lib/api";
-import React, { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import React, { useEffect, useState, useMemo } from "react";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import {
   IconEye,
   IconFileInvoice,
@@ -11,6 +11,9 @@ import {
   IconFilter,
   IconX,
   IconBellRinging,
+  IconCreditCard,
+  IconPackageExport,
+  IconDeviceFloppy,
 } from "@tabler/icons-react";
 import PageContainer from "../components/container/PageContainer";
 import toast from "react-hot-toast";
@@ -38,11 +41,16 @@ const { RangePicker } = DatePicker;
 
 const OrdersPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { currentUser } = useAppSelector((state) => state.authSlice);
   const [form] = Form.useForm();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const initialPage = parseInt(searchParams.get("page") || "1", 10);
+
+  // --- View Detection ---
+  const isProcessingView = location.pathname.includes("/processing");
+  const isPaymentPendingView = location.pathname.includes("/payment-pending");
 
   // --- Pagination state ---
   const [pagination, setPagination] = useState({
@@ -61,6 +69,10 @@ const OrdersPage = () => {
   // --- Bulk Action State ---
   const [isBulkLoading, setIsBulkLoading] = useState(false);
 
+  // --- Inline Edit State ---
+  const [trackingEdits, setTrackingEdits] = useState<Record<string, string>>({});
+  const [courierEdits, setCourierEdits] = useState<Record<string, string>>({});
+
   // --- Fetch dropdown data ---
   const fetchDropdownData = async () => {
     try {
@@ -78,6 +90,19 @@ const OrdersPage = () => {
   useEffect(() => {
     fetchDropdownData();
   }, []);
+
+  // --- Initialize view-based filters ---
+  useEffect(() => {
+    const defaultFilters: any = {
+      payment: isPaymentPendingView ? "Pending" : "all",
+      status: isProcessingView ? "Processing" : "all",
+      from: "all",
+      stockId: "all",
+      paymentMethod: "all",
+    };
+    form.setFieldsValue(defaultFilters);
+    fetchOrders(defaultFilters);
+  }, [location.pathname]);
 
   // --- Fetch orders from API ---
   const fetchOrders = async (values?: Record<string, unknown>) => {
@@ -135,16 +160,6 @@ const OrdersPage = () => {
 
   const handleFilterSubmit = (values: any) => {
     setPagination((prev) => ({ ...prev, current: 1 }));
-    // We need to wait for state update or pass values directly.
-    // fetchOrders uses form.getFieldsValue() so verify if values are synced or pass explicitly.
-    // Ideally, pass explicitly to fetchOrders or let useEffect trigger (but useEffect depends on pagination).
-    // Best: Update pagination, then fetch. But fetch depends on pagination state.
-    // We'll call fetchOrders directly with the new pagination (reset to 1) and values.
-    // NOTE: fetchOrders uses 'pagination.current' from state. We must manually override in params or wait.
-    // Simpler approach: Just reset page to 1, and let useEffect trigger? No, useEffect depends on [pagination.current].
-    // If page is already 1, it won't trigger.
-    // So we call fetchOrders manually passing the values, and override page param logic inside if needed, or just setPagination(1) and if it's already 1 call fetch.
-
     if (pagination.current === 1) {
       fetchOrders(values);
     } else {
@@ -153,7 +168,6 @@ const OrdersPage = () => {
         prev.set("page", "1");
         return prev;
       });
-      // useEffect will trigger fetchOrders
     }
   };
 
@@ -162,27 +176,79 @@ const OrdersPage = () => {
     handleFilterSubmit({});
   };
 
-  const handleBulkNotify = async (status: string) => {
+  const handleSingleRowUpdate = async (orderId: string) => {
     try {
       setIsBulkLoading(true);
-      const ordersToNotify = orders.filter(o => selectedRowKeys.includes(o.orderId));
+      const trackingNumber = trackingEdits[orderId];
+      const courier = courierEdits[orderId] || "Domex";
+
+      if (!trackingNumber) {
+        toast.error("Please enter a tracking number");
+        return;
+      }
+
+      const payload = {
+        trackingNumber,
+        courier,
+        status: "Completed",
+        sendNotification: true
+      };
+
+      const fd = new FormData();
+      fd.append("data", JSON.stringify(payload));
+      await api.put(`/api/v1/erp/orders/${orderId}`, fd);
       
-      const promises = ordersToNotify.map(async (o) => {
-        const payload = { 
-          status: status,
-          sendNotification: true 
-        };
+      toast.success(`Order #${orderId} updated to Completed`);
+      
+      // Clean up local edits
+      const newTracking = { ...trackingEdits };
+      delete newTracking[orderId];
+      setTrackingEdits(newTracking);
+      
+      const newCourier = { ...courierEdits };
+      delete newCourier[orderId];
+      setCourierEdits(newCourier);
+
+      fetchOrders();
+    } catch (error) {
+      toast.error("Failed to update order");
+    } finally {
+      setIsBulkLoading(false);
+    }
+  };
+
+  const handleBulkUpdate = async (type: "STATUS" | "PAYMENT", targetValue: string) => {
+    try {
+      setIsBulkLoading(true);
+      const ordersToUpdate = orders.filter(o => selectedRowKeys.includes(o.orderId));
+      
+      const promises = ordersToUpdate.map(async (o) => {
+        const payload: any = {};
+        if (type === "STATUS") {
+          payload.status = targetValue;
+          payload.sendNotification = true; // Multilingual notification triggered on backend
+          
+          // Use inline tracking/courier if available
+          if (targetValue === "Completed") {
+            payload.trackingNumber = trackingEdits[o.orderId] || o.trackingNumber;
+            payload.courier = courierEdits[o.orderId] || o.courier || "Domex";
+          }
+        } else {
+          payload.paymentStatus = targetValue;
+          payload.sendNotification = false; // No notification for payment changes
+        }
+
         const fd = new FormData();
         fd.append("data", JSON.stringify(payload));
         return api.put(`/api/v1/erp/orders/${o.orderId}`, fd);
       });
 
       await Promise.all(promises);
-      toast.success(`Successfully sent ${status} notifications to ${selectedRowKeys.length} orders`);
+      toast.success(`Successfully updated ${selectedRowKeys.length} orders to ${targetValue}`);
       setSelectedRowKeys([]);
       fetchOrders();
     } catch (error) {
-      toast.error("Failed to send some notifications");
+      toast.error("Failed to update some orders");
     } finally {
       setIsBulkLoading(false);
     }
@@ -191,37 +257,18 @@ const OrdersPage = () => {
   // Helper for Date Formatting
   const formatDate = (dateValue: any) => {
     if (!dateValue) return "-";
-
-    // Check for Firebase Timestamp objects (either generic or serialized)
     if (typeof dateValue === "object") {
-      if (dateValue._seconds !== undefined) {
-        return dayjs(dateValue._seconds * 1000).format("DD MMM YYYY, hh:mm A");
-      }
-      if (dateValue.seconds !== undefined) {
-        return dayjs(dateValue.seconds * 1000).format("DD MMM YYYY, hh:mm A");
-      }
-      if (dateValue.toDate) {
-        return dayjs(dateValue.toDate()).format("DD MMM YYYY, hh:mm A");
-      }
+      if (dateValue._seconds !== undefined) return dayjs(dateValue._seconds * 1000).format("DD MMM YYYY, hh:mm A");
+      if (dateValue.seconds !== undefined) return dayjs(dateValue.seconds * 1000).format("DD MMM YYYY, hh:mm A");
+      if (dateValue.toDate) return dayjs(dateValue.toDate()).format("DD MMM YYYY, hh:mm A");
     }
-
-    // Otherwise fallback fallback to simple dayjs standard parsing
     const parsed = dayjs(dateValue);
-    if (parsed.isValid()) {
-      return parsed.format("DD MMM YYYY, hh:mm A");
-    }
-
-    return String(dateValue);
+    return parsed.isValid() ? parsed.format("DD MMM YYYY, hh:mm A") : String(dateValue);
   };
 
-  // Helper for Status Badges
-  const getStatusTagColor = (
-    status: string | undefined,
-    type: "payment" | "order",
-  ) => {
+  const getStatusTagColor = (status: string | undefined, type: "payment" | "order") => {
     if (!status) return "default";
     const s = status.toLowerCase();
-
     if (type === "payment") {
       if (s === "paid") return "success";
       if (s === "pending") return "default";
@@ -248,7 +295,6 @@ const OrdersPage = () => {
               onClick={() => navigate(`/orders/${order.orderId}/invoice`)}
             />
           </Tooltip>
-          {/* View Button Removed/Redundant? The legacy code had view button. Keeping it. */}
           <Tooltip title="View">
             <Button
               type="text"
@@ -267,34 +313,49 @@ const OrdersPage = () => {
         </Space>
       ),
     },
+    // Delivery Column (Only for Processing View)
+    ...(isProcessingView ? [{
+      title: "Delivery Info",
+      key: "delivery",
+      width: 250,
+      render: (_: any, order: Order) => (
+        <Space.Compact className="w-full">
+          <Select 
+            defaultValue={order.courier || "Domex"} 
+            className="w-24 rounded-l-xl"
+            onChange={(val) => setCourierEdits(prev => ({ ...prev, [order.orderId]: val }))}
+          >
+            <Option value="Domex">Domex</Option>
+            <Option value="Certis">Certis</Option>
+            <Option value="Prompt">Prompt</Option>
+            <Option value="Koombiyo">Koombiyo</Option>
+          </Select>
+          <Input 
+            placeholder="Tracking #" 
+            defaultValue={order.trackingNumber}
+            className="flex-1"
+            onChange={(e) => setTrackingEdits(prev => ({ ...prev, [order.orderId]: e.target.value }))}
+          />
+          <Tooltip title="Update to Completed">
+            <Button 
+              icon={<IconDeviceFloppy size={16} />} 
+              type="primary"
+              className="bg-emerald-600 border-none"
+              onClick={() => handleSingleRowUpdate(order.orderId)}
+            />
+          </Tooltip>
+        </Space.Compact>
+      )
+    }] : []),
     {
       title: "Order Details",
       key: "details",
       render: (_, order) => (
         <div className="flex flex-col">
           <Typography.Text strong>#{order.orderId}</Typography.Text>
-          <Typography.Text type="secondary" className="text-xs">
-            {formatDate(order.createdAt)}
-          </Typography.Text>
-          <Typography.Text type="secondary" className="text-xs">
-            via {order.from}
-          </Typography.Text>
+          <Typography.Text type="secondary" className="text-xs">{formatDate(order.createdAt)}</Typography.Text>
+          <Typography.Text type="secondary" className="text-[10px] uppercase font-bold text-gray-400">via {order.from}</Typography.Text>
         </div>
-      ),
-    },
-    {
-      title: "Notify",
-      key: "notify",
-      width: 80,
-      align: "center",
-      render: (_, order) => (
-        <Tooltip title="Quick Notify">
-          <Button
-            type="text"
-            icon={<IconBellRinging size={18} className="text-emerald-500" />}
-            onClick={() => navigate(`/orders/${order.orderId}`)}
-          />
-        </Tooltip>
       ),
     },
     {
@@ -302,12 +363,8 @@ const OrdersPage = () => {
       key: "customer",
       render: (_, order) => (
         <div className="flex flex-col">
-          <Typography.Text strong>
-            {order.customer?.name || "N/A"}
-          </Typography.Text>
-          <Typography.Text type="secondary" className="text-xs">
-            {order.items?.length || 0} Items
-          </Typography.Text>
+          <Typography.Text strong>{order.customer?.name || "N/A"}</Typography.Text>
+          <Typography.Text type="secondary" className="text-xs">{order.items?.length || 0} Items</Typography.Text>
         </div>
       ),
     },
@@ -317,12 +374,8 @@ const OrdersPage = () => {
       align: "center",
       render: (_, order) => (
         <div className="flex flex-col items-center">
-          <Tag color={getStatusTagColor(order.paymentStatus, "payment")}>
-            {order.paymentStatus || "N/A"}
-          </Tag>
-          <span className="text-xs text-gray-400 mt-1">
-            {order.paymentMethod || "—"}
-          </span>
+          <Tag color={getStatusTagColor(order.paymentStatus, "payment")} className="rounded-full text-[10px] font-black">{order.paymentStatus || "N/A"}</Tag>
+          <span className="text-[10px] text-gray-400 mt-1 uppercase font-bold">{order.paymentMethod || "—"}</span>
         </div>
       ),
     },
@@ -330,81 +383,51 @@ const OrdersPage = () => {
       title: "Total",
       key: "total",
       align: "right",
-      render: (_, order) => (
-        <Typography.Text strong>
-          LKR {order.total?.toLocaleString()}
-        </Typography.Text>
-      ),
+      render: (_, order) => <Typography.Text strong className="text-emerald-700">LKR {order.total?.toLocaleString()}</Typography.Text>,
     },
     {
       title: "Status",
       key: "status",
       align: "center",
-      render: (_, order) => (
-        <Tag color={getStatusTagColor(order.status, "order")}>
-          {order.status}
-        </Tag>
-      ),
+      render: (_, order) => <Tag color={getStatusTagColor(order.status, "order")} className="rounded-full text-[10px] font-black uppercase">{order.status}</Tag>,
     },
     {
       title: "Check",
       key: "check",
       align: "center",
-      render: (_, order) =>
-        order.integrity ? (
-          <IconCheck size={18} className="text-green-600 mx-auto" />
-        ) : (
-          <IconAlertCircle size={18} className="text-red-600 mx-auto" />
-        ),
+      render: (_, order) => order.integrity ? <IconCheck size={18} className="text-green-600 mx-auto" /> : <IconAlertCircle size={18} className="text-red-600 mx-auto" />,
     },
   ];
 
+  const viewTitle = isProcessingView ? "Processing Orders" : isPaymentPendingView ? "Pending Payments" : "All Orders";
+
   return (
-    <PageContainer
-      title="Orders | NEVERBE ERP"
-      loading={isLoading}
-      description="Manage Customer Orders"
-    >
+    <PageContainer title={`${viewTitle} | NEVERBE ERP`} loading={isLoading} description={`Manage ${viewTitle}`}>
       <Space direction="vertical" size="large" className="w-full">
         {/* PREMIUM HEADER */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-1.5 h-10 bg-green-600 rounded-full" />
+          <div className="flex items-center gap-4">
+            <div className={`w-2 h-12 ${isProcessingView ? 'bg-orange-500' : isPaymentPendingView ? 'bg-blue-500' : 'bg-emerald-600'} rounded-full`} />
             <div className="flex flex-col">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 leading-none mb-1">
-                Management
-              </span>
-              <h2 className="text-4xl font-black text-gray-900 tracking-tight leading-none">
-                Order Management
-              </h2>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 leading-none mb-2">Order Management</span>
+              <h2 className="text-4xl font-black text-gray-900 tracking-tight leading-none">{viewTitle}</h2>
             </div>
           </div>
         </div>
 
         {/* Filters */}
-        <Card size="small" className="shadow-sm">
+        <Card size="small" className="rounded-2xl shadow-sm border-gray-100">
           <Form
             form={form}
             layout="inline"
             onFinish={handleFilterSubmit}
-            initialValues={{
-              payment: "all",
-              status: "all",
-              from: "all",
-              stockId: "all",
-              paymentMethod: "all",
-            }}
-            className="flex flex-wrap gap-2 w-full"
+            className="flex flex-wrap gap-2 w-full p-2"
           >
             <Form.Item name="search" className="!mb-0 flex-1 min-w-[200px]">
-              <Input
-                prefix={<IconSearch size={15} className="text-gray-400" />}
-                placeholder="Search orders..."
-                allowClear
-              />
+              <Input prefix={<IconSearch size={15} className="text-gray-400" />} placeholder="Search order, customer, phone..." allowClear className="rounded-xl h-10" />
             </Form.Item>
             <Form.Item name="payment" className="!mb-0 w-40">
-              <Select>
+              <Select className="h-10 rounded-xl overflow-hidden">
                 <Option value="all">All Payment</Option>
                 <Option value="Paid">Paid</Option>
                 <Option value="Pending">Pending</Option>
@@ -413,100 +436,72 @@ const OrdersPage = () => {
               </Select>
             </Form.Item>
             <Form.Item name="status" className="!mb-0 w-36">
-              <Select>
+              <Select className="h-10 rounded-xl overflow-hidden">
                 <Option value="all">All Status</Option>
                 <Option value="Pending">Pending</Option>
                 <Option value="Processing">Processing</Option>
                 <Option value="Completed">Completed</Option>
+                <Option value="Cancelled">Cancelled</Option>
               </Select>
             </Form.Item>
             <Form.Item name="dateRange" className="!mb-0 w-64">
-              <RangePicker className="w-full" />
-            </Form.Item>
-            <Form.Item name="from" className="!mb-0 w-36">
-              <Select>
-                <Option value="all">All Sources</Option>
-                <Option value="Store">Store</Option>
-                <Option value="Website">Website</Option>
-                <Option value="Android Web">Android Web</Option>
-                <Option value="iOS Web">iOS Web</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item name="stockId" className="!mb-0 w-40">
-              <Select dropdownMatchSelectWidth={false}>
-                <Option value="all">All Stocks</Option>
-                {stocks.map((s) => (
-                  <Option key={s.id} value={s.id}>
-                    {s.label}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item name="paymentMethod" className="!mb-0 w-44">
-              <Select dropdownMatchSelectWidth={false}>
-                <Option value="all">All Methods</Option>
-                {paymentMethods.map((pm) => (
-                  <Option key={pm.id} value={pm.name}>
-                    {pm.name}
-                  </Option>
-                ))}
-              </Select>
+              <RangePicker className="w-full h-10 rounded-xl" />
             </Form.Item>
             <Form.Item className="!mb-0">
               <Space>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  icon={<IconFilter size={15} />}
-                >
-                  Filter
-                </Button>
-                <Button icon={<IconX size={15} />} onClick={handleClearFilters}>
-                  Clear
-                </Button>
+                <Button type="primary" htmlType="submit" icon={<IconFilter size={15} />} className="h-10 px-6 rounded-xl font-bold bg-emerald-600 border-emerald-600">Filter</Button>
+                <Button icon={<IconX size={15} />} onClick={handleClearFilters} className="h-10 px-6 rounded-xl font-bold">Clear</Button>
               </Space>
             </Form.Item>
           </Form>
         </Card>
 
-        {/* Table */}
+        {/* Table + Bulk UI */}
         <div className="relative">
           {selectedRowKeys.length > 0 && (
             <div className="absolute -top-16 left-0 right-0 z-10 animate-in slide-in-from-bottom-4 duration-300">
-              <Card size="small" className="bg-emerald-900 border-emerald-800 shadow-2xl shadow-emerald-900/40">
-                <div className="flex items-center justify-between px-4 py-1">
-                  <div className="flex items-center gap-4">
-                    <span className="text-emerald-100 font-bold">
-                      {selectedRowKeys.length} Orders Selected
-                    </span>
-                    <Divider type="vertical" className="bg-emerald-700" />
+              <Card size="small" className={`${isProcessingView ? 'bg-orange-600' : 'bg-blue-600'} border-none shadow-2xl rounded-2xl`}>
+                <div className="flex items-center justify-between px-6 py-2">
+                  <div className="flex items-center gap-6">
+                    <span className="text-white font-black text-xs uppercase tracking-widest">{selectedRowKeys.length} Selected</span>
+                    <Divider type="vertical" className="bg-white/20 h-6" />
                     <Space size="middle">
-                      <Button 
-                        type="link" 
-                        size="small" 
-                        className="text-emerald-300 hover:text-white font-bold uppercase text-[10px] tracking-widest"
-                        onClick={() => handleBulkNotify("Completed")}
-                        disabled={isBulkLoading}
-                      >
-                        Notify Shipped (Completed)
-                      </Button>
+                      {isProcessingView && (
+                        <Button 
+                          type="primary" 
+                          size="middle" 
+                          icon={<IconPackageExport size={16} />}
+                          className="bg-white text-orange-600 hover:bg-orange-50 border-none font-bold rounded-xl h-10 px-6"
+                          onClick={() => handleBulkUpdate("STATUS", "Completed")}
+                          loading={isBulkLoading}
+                        >
+                          Mark as Completed & Notify
+                        </Button>
+                      )}
+                      {isPaymentPendingView && (
+                        <Button 
+                          type="primary" 
+                          size="middle" 
+                          icon={<IconCreditCard size={16} />}
+                          className="bg-white text-blue-600 hover:bg-blue-50 border-none font-bold rounded-xl h-10 px-6"
+                          onClick={() => handleBulkUpdate("PAYMENT", "Paid")}
+                          loading={isBulkLoading}
+                        >
+                          Mark as Paid
+                        </Button>
+                      )}
                     </Space>
                   </div>
-                  <Button 
-                    type="text" 
-                    icon={<IconX size={16} />} 
-                    className="text-emerald-400 hover:text-white"
-                    onClick={() => setSelectedRowKeys([])}
-                  />
+                  <Button type="text" icon={<IconX size={18} />} className="text-white/60 hover:text-white" onClick={() => setSelectedRowKeys([])} />
                 </div>
               </Card>
             </div>
           )}
           <Table
-            rowSelection={{
+            rowSelection={ (isProcessingView || isPaymentPendingView) ? {
               selectedRowKeys,
               onChange: (keys) => setSelectedRowKeys(keys),
-            }}
+            } : undefined }
             columns={columns}
             dataSource={orders}
             rowKey="orderId"
@@ -514,7 +509,7 @@ const OrdersPage = () => {
             loading={isLoading || isBulkLoading}
             onChange={handleTableChange}
             scroll={{ x: 1200 }}
-            bordered
+            className="custom-table border border-gray-100 rounded-2xl overflow-hidden shadow-sm"
           />
         </div>
       </Space>
