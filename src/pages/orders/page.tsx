@@ -368,34 +368,36 @@ const OrdersPage = () => {
         </div>
       ),
     },
-    {
+    // Only show Payment column if not in Payment Pending view
+    ...(!isPaymentPendingView ? [{
       title: "Payment",
       key: "payment",
-      align: "center",
-      render: (_, order) => (
+      align: "center" as const,
+      render: (_: any, order: Order) => (
         <div className="flex flex-col items-center">
           <Tag color={getStatusTagColor(order.paymentStatus, "payment")} className="rounded-full text-[10px] font-black">{order.paymentStatus || "N/A"}</Tag>
           <span className="text-[10px] text-gray-400 mt-1 uppercase font-bold">{order.paymentMethod || "—"}</span>
         </div>
       ),
-    },
+    }] : []),
     {
       title: "Total",
       key: "total",
-      align: "right",
-      render: (_, order) => <Typography.Text strong className="text-emerald-700">LKR {order.total?.toLocaleString()}</Typography.Text>,
+      align: "right" as const,
+      render: (_: any, order: Order) => <Typography.Text strong className="text-emerald-700">LKR {order.total?.toLocaleString()}</Typography.Text>,
     },
-    {
+    // Only show Status column if not in Processing view
+    ...(!isProcessingView ? [{
       title: "Status",
       key: "status",
-      align: "center",
-      render: (_, order) => <Tag color={getStatusTagColor(order.status, "order")} className="rounded-full text-[10px] font-black uppercase">{order.status}</Tag>,
-    },
+      align: "center" as const,
+      render: (_: any, order: Order) => <Tag color={getStatusTagColor(order.status, "order")} className="rounded-full text-[10px] font-black uppercase">{order.status}</Tag>,
+    }] : []),
     {
       title: "Check",
       key: "check",
-      align: "center",
-      render: (_, order) => order.integrity ? <IconCheck size={18} className="text-green-600 mx-auto" /> : <IconAlertCircle size={18} className="text-red-600 mx-auto" />,
+      align: "center" as const,
+      render: (_: any, order: Order) => order.integrity ? <IconCheck size={18} className="text-green-600 mx-auto" /> : <IconAlertCircle size={18} className="text-red-600 mx-auto" />,
     },
   ];
 
@@ -426,24 +428,28 @@ const OrdersPage = () => {
             <Form.Item name="search" className="!mb-0 flex-1 min-w-[200px]">
               <Input prefix={<IconSearch size={15} className="text-gray-400" />} placeholder="Search order, customer, phone..." allowClear className="rounded-xl h-10" />
             </Form.Item>
-            <Form.Item name="payment" className="!mb-0 w-40">
-              <Select className="h-10 rounded-xl overflow-hidden">
-                <Option value="all">All Payment</Option>
-                <Option value="Paid">Paid</Option>
-                <Option value="Pending">Pending</Option>
-                <Option value="Failed">Failed</Option>
-                <Option value="Refunded">Refunded</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item name="status" className="!mb-0 w-36">
-              <Select className="h-10 rounded-xl overflow-hidden">
-                <Option value="all">All Status</Option>
-                <Option value="Pending">Pending</Option>
-                <Option value="Processing">Processing</Option>
-                <Option value="Completed">Completed</Option>
-                <Option value="Cancelled">Cancelled</Option>
-              </Select>
-            </Form.Item>
+            {!isPaymentPendingView && (
+              <Form.Item name="payment" className="!mb-0 w-40">
+                <Select className="h-10 rounded-xl overflow-hidden">
+                  <Option value="all">All Payment</Option>
+                  <Option value="Paid">Paid</Option>
+                  <Option value="Pending">Pending</Option>
+                  <Option value="Failed">Failed</Option>
+                  <Option value="Refunded">Refunded</Option>
+                </Select>
+              </Form.Item>
+            )}
+            {!isProcessingView && (
+              <Form.Item name="status" className="!mb-0 w-36">
+                <Select className="h-10 rounded-xl overflow-hidden">
+                  <Option value="all">All Status</Option>
+                  <Option value="Pending">Pending</Option>
+                  <Option value="Processing">Processing</Option>
+                  <Option value="Completed">Completed</Option>
+                  <Option value="Cancelled">Cancelled</Option>
+                </Select>
+              </Form.Item>
+            )}
             <Form.Item name="dateRange" className="!mb-0 w-64">
               <RangePicker className="w-full h-10 rounded-xl" />
             </Form.Item>
