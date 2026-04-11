@@ -398,54 +398,35 @@ const OrdersPage = () => {
         </div>
       ),
     },
-    // Only show Payment column if not in Payment Pending view
-    ...(!isPaymentPendingView ? [{
+    {
       title: "Payment",
       key: "payment",
       align: "center" as const,
       render: (_: any, order: Order) => (
         <div className="flex flex-col items-center">
-          <Tag color={getStatusTagColor(order.paymentStatus, "payment")} className="rounded-full text-[10px] font-black uppercase text-center min-w-[80px]">{order.paymentStatus || "N/A"}</Tag>
+          <Tag color={getStatusTagColor(order.paymentStatus, "payment")} className="rounded-full text-[10px] font-black uppercase text-center min-w-[80px]">
+            {order.paymentStatus || "N/A"}
+          </Tag>
           <span className="text-[10px] text-gray-400 mt-1 uppercase font-bold">{order.paymentMethod || "—"}</span>
         </div>
       ),
-    }] : []),
-    // Show Read-only Payment column specifically for Payment Pending view
-    ...(isPaymentPendingView ? [{
-      title: "Payment",
-      key: "payment_readonly",
-      align: "center" as const,
-      render: (_: any, order: Order) => (
-        <div className="flex flex-col items-center">
-          <Tag color={getStatusTagColor(order.paymentStatus, "payment")} className="rounded-full text-[10px] font-black uppercase text-center min-w-[80px]">{order.paymentStatus || "N/A"}</Tag>
-          <span className="text-[10px] text-gray-400 mt-1 uppercase font-bold">{order.paymentMethod || "—"}</span>
-        </div>
-      ),
-    }] : []),
+    },
     {
       title: "Total",
       key: "total",
       align: "right" as const,
       render: (_: any, order: Order) => <Typography.Text strong className="text-emerald-700">LKR {order.total?.toLocaleString()}</Typography.Text>,
     },
-    // Only show Status column if not in Processing view
-    ...(!isProcessingView ? [{
+    {
       title: "Status",
       key: "status",
       align: "center" as const,
       render: (_: any, order: Order) => (
-        <Tag color={getStatusTagColor(order.status, "order")} className="rounded-full text-[10px] font-black uppercase text-center min-w-[100px]">{order.status}</Tag>
+        <Tag color={getStatusTagColor(order.status, "order")} className="rounded-full text-[10px] font-black uppercase text-center min-w-[100px]">
+          {order.status}
+        </Tag>
       ),
-    }] : []),
-    // Show Read-only Status column specifically for Processing page
-    ...(isProcessingView ? [{
-      title: "Status",
-      key: "status_readonly",
-      align: "center" as const,
-      render: (_: any, order: Order) => (
-        <Tag color={getStatusTagColor(order.status, "order")} className="rounded-full text-[10px] font-black uppercase text-center min-w-[100px]">{order.status}</Tag>
-      ),
-    }] : []),
+    },
     {
       title: "Check",
       key: "check",
