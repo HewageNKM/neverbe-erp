@@ -74,7 +74,7 @@ const OrderEditPage = () => {
     <PageContainer title={`Edit Order #${order.orderId}`} loading={loading}>
       <div className="w-full flex flex-col gap-8">
         <OrderEditForm order={order} onRefresh={fetchOrder} />
-        <OrderExchangeHistory orderId={order.orderId} />
+        <OrderExchangeHistory orderId={param.orderId || order.orderId} />
       </div>
     </PageContainer>
   );
