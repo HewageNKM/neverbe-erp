@@ -35,7 +35,6 @@ const CommunicationsPage = () => {
   const [searchText, setSearchText] = useState("");
   const [selectedLog, setSelectedLog] = useState<NotificationLog | null>(null);
   
-  // Pagination state
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 20,
@@ -110,11 +109,7 @@ const CommunicationsPage = () => {
     form.setFieldsValue({ content });
   };
 
-  const filteredLogs = logs.filter(log => 
-    log.orderId?.toLowerCase().includes(searchText.toLowerCase()) ||
-    log.to?.toLowerCase().includes(searchText.toLowerCase()) ||
-    log.type?.toLowerCase().includes(searchText.toLowerCase())
-  );
+
 
   const columns = [
     {
@@ -123,7 +118,7 @@ const CommunicationsPage = () => {
       key: "createdAt",
       render: (date: any) => (
         <Text className="text-gray-500 text-xs">
-          {date}
+          {date ? dayjs(date).format("DD/MM/YYYY, hh:mm:ss a") : "-"}
         </Text>
       ),
     },
@@ -260,7 +255,9 @@ const CommunicationsPage = () => {
             loading={loading}
             rowKey="id"
             pagination={{
-              ...pagination,
+              total: pagination.total,
+              current: pagination.current,
+              pageSize: pagination.pageSize,
               position: ["bottomCenter"],
               showSizeChanger: true,
               pageSizeOptions: ["10", "20", "50", "100"],
@@ -271,6 +268,7 @@ const CommunicationsPage = () => {
                 current: pag.current,
                 pageSize: pag.pageSize,
               }));
+              // fetchLogs is triggered by the useEffect on pagination state
             }}
             className="custom-table"
           />
