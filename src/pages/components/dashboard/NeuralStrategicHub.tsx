@@ -242,7 +242,7 @@ const NeuralStrategicHub = () => {
             <DashboardCard className="xl:col-span-8 p-10 relative overflow-hidden group rounded-[3rem]">
                <div className="absolute top-0 right-0 -mt-24 -mr-24 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl" />
 
-               <div className="flex items-center justify-between mb-12">
+               <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-4">
                      <div className="w-1.5 h-8 bg-emerald-600 rounded-full" />
                      <div>
@@ -274,7 +274,7 @@ const NeuralStrategicHub = () => {
                   )}
                </div>
 
-               <div className="h-[380px] w-full">
+               <div className="h-[260px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
                      <ComposedChart data={chartPoints} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                         <defs>
@@ -372,7 +372,7 @@ const NeuralStrategicHub = () => {
             {/* Action Feed Sidebar */}
             <div className="xl:col-span-4 flex flex-col gap-6">
                {/* 📊 Monthly Sales Target Gauge */}
-               {mt && (
+               {mt ? (
                   <DashboardCard className="p-6 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm">
                      <div className="flex items-center gap-3 mb-5">
                         <div className="p-2 bg-indigo-50 rounded-xl text-indigo-600">
@@ -409,7 +409,7 @@ const NeuralStrategicHub = () => {
                            <span className="text-sm font-black text-emerald-700">Rs. {(mt.actual / 1000).toFixed(0)}K</span>
                         </div>
                         <div className="bg-amber-50/50 rounded-2xl p-3 text-center">
-                           <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest block mb-1">AI Target</span>
+                           <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest block mb-1">ML Target</span>
                            <span className="text-sm font-black text-amber-700">Rs. {(mt.forecast / 1000).toFixed(0)}K</span>
                         </div>
                      </div>
@@ -418,6 +418,29 @@ const NeuralStrategicHub = () => {
                         <span className="text-[8px] font-black text-gray-300 uppercase">{mt.daysElapsed} days elapsed</span>
                         <span className="text-[8px] font-black text-gray-300 uppercase">{mt.daysRemaining} days left</span>
                      </div>
+                  </DashboardCard>
+               ) : (
+                  <DashboardCard className="p-6 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm">
+                     <div className="flex items-center gap-3 mb-5">
+                        <div className="p-2 bg-indigo-50 rounded-xl text-indigo-600">
+                           <IconCalendarStats size={20} />
+                        </div>
+                        <div>
+                           <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none block">Monthly Target</span>
+                           <span className="text-[9px] font-bold text-gray-300 uppercase">Awaiting Neural Sync</span>
+                        </div>
+                     </div>
+                     <div className="flex items-center justify-center py-6">
+                        <Progress type="circle" percent={0} size={140} trailColor="#f1f5f9" strokeWidth={10}
+                           format={() => (
+                              <div className="flex flex-col items-center">
+                                 <Spin size="small" />
+                                 <span className="text-[8px] font-black text-gray-300 uppercase tracking-widest mt-2">Syncing</span>
+                              </div>
+                           )}
+                        />
+                     </div>
+                     <p className="text-[10px] font-bold text-gray-300 text-center m-0">Deploy updated functions to activate monthly target tracking</p>
                   </DashboardCard>
                )}
 
