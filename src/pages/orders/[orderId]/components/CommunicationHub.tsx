@@ -103,7 +103,6 @@ const CommunicationHub: React.FC<CommunicationHubProps> = ({
 
   const formatDate = (dateValue: any) => {
     if (!dateValue) return "-";
-    if (dateValue.seconds) return dayjs(dateValue.seconds * 1000).format("DD MMM, hh:mm A");
     return dayjs(dateValue).format("DD MMM, hh:mm A");
   };
 
