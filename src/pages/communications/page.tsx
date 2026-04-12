@@ -54,17 +54,20 @@ const CommunicationsPage = () => {
   const [form] = Form.useForm();
   const [msgType, setMsgType] = useState<"sms" | "email">("sms");
 
-  useEffect(() => {
-    fetchLogs(pagination.current, pagination.pageSize);
+    fetchLogs(pagination.current, pagination.pageSize, searchText);
     fetchTemplates();
   }, [pagination.current, pagination.pageSize]);
 
-  const fetchLogs = async (page: number = pagination.current, pageSize: number = pagination.pageSize) => {
+  const fetchLogs = async (
+    page: number = pagination.current, 
+    pageSize: number = pagination.pageSize,
+    search: string = searchText
+  ) => {
     try {
       setLoading(true);
-      const response = await api.get(`/api/v1/erp/communications?page=${page}&pageSize=${pageSize}`);
+      const response = await api.get(`/api/v1/erp/communications?page=${page}&pageSize=${pageSize}&search=${search}`);
       setLogs(response.data.data || []);
-      setPagination(prev => ({ ...prev, total: response.data.total || 0 }));
+      setPagination(prev => ({ ...prev, total: response.data.total || 0, current: page, pageSize }));
     } catch (error) {
       console.error("Failed to fetch communication logs:", error);
       toast.error("Failed to load communication history");
@@ -208,7 +211,30 @@ const CommunicationsPage = () => {
               className="w-full md:w-72 h-10 rounded-xl"
               value={searchText}
               onChange={e => setSearchText(e.target.value)}
+              onPressEnter={() => fetchLogs(1, pagination.pageSize, searchText)}
+              suffix={
+                searchText && (
+                  <Button 
+                    type="text" 
+                    size="small" 
+                    onClick={() => {
+                      setSearchText("");
+                      fetchLogs(1, pagination.pageSize, "");
+                    }}
+                    className="flex justify-center items-center"
+                  >
+                    ×
+                  </Button>
+                )
+              }
             />
+            <Button 
+              type="primary" 
+              onClick={() => fetchLogs(1, pagination.pageSize, searchText)}
+              className="h-10 px-4 rounded-xl"
+            >
+              Search
+            </Button>
             {canCompose && (
               <Button 
                  type="primary"
@@ -221,7 +247,7 @@ const CommunicationsPage = () => {
             )}
             <Button 
               icon={<IconRefresh size={18} />} 
-              onClick={fetchLogs}
+              onClick={() => fetchLogs(1, pagination.pageSize, "")}
               className="h-10 w-10 flex items-center justify-center rounded-xl border-gray-200"
             />
           </Space>
@@ -230,7 +256,7 @@ const CommunicationsPage = () => {
         <Card className="rounded-2xl border-gray-100 shadow-xl shadow-gray-200/50" bodyStyle={{ padding: 0 }}>
           <Table
             columns={columns}
-            dataSource={filteredLogs}
+            dataSource={logs}
             loading={loading}
             rowKey="id"
             pagination={{
