@@ -4,13 +4,14 @@ import api from "@/lib/api";
 
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { IconCheck } from "@tabler/icons-react";
+import { IconCheck, IconX, IconSend, IconPackage, IconFileInvoice } from "@tabler/icons-react";
 import PageContainer from "@/pages/components/container/PageContainer";
 import toast from "react-hot-toast";
 import { useAppSelector } from "@/lib/hooks";
 import { RootState } from "@/lib/store";
 
-import { GRN_STATUS_COLORS, GRN_STATUS_LABELS } from "@/model/GRN";
+import { GRN_STATUS_COLORS, GRN_STATUS_LABELS, GRNStatus } from "@/model/GRN";
+import { useConfirmationDialog } from "@/contexts/ConfirmationDialogContext";
 
 const { Text, Title } = Typography;
 
@@ -48,7 +49,9 @@ const ViewGRNPage = () => {
   const grnId = params.id as string;
 
   const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
   const [grn, setGRN] = useState<GRN | null>(null);
+  const { showConfirmation } = useConfirmationDialog();
 
   const { currentUser } = useAppSelector((state: RootState) => state.authSlice);
 
@@ -68,6 +71,36 @@ const ViewGRNPage = () => {
   useEffect(() => {
     if (currentUser && grnId) fetchGRN();
   }, [currentUser, grnId, fetchGRN]);
+
+  const handleUpdateStatus = (status: GRNStatus) => {
+    const actionMap: Record<string, string> = {
+      SUBMITTED: "Submit for Review",
+      APPROVED: "Approve",
+      REJECTED: grn?.status === "DRAFT" ? "Cancel" : "Reject",
+    };
+    
+    const action = actionMap[status] || "Update Status";
+    const isDestructive = status === "REJECTED";
+
+    showConfirmation({
+      title: `${action.toUpperCase()}?`,
+      message: `Are you sure you want to ${action.toLowerCase()} this GRN?`,
+      variant: isDestructive ? "danger" : "default",
+      onSuccess: async () => {
+        setUpdating(true);
+        try {
+          await api.patch(`/api/v1/erp/inventory/grn/${grnId}/status`, { status });
+          toast.success(`GRN ${action}ed successfully`);
+          fetchGRN();
+        } catch (error: any) {
+          console.error(error);
+          toast.error(error.response?.data?.message || "Failed to update status");
+        } finally {
+          setUpdating(false);
+        }
+      },
+    });
+  };
 
   if (loading) {
     return (
@@ -186,6 +219,69 @@ const ViewGRNPage = () => {
                 />
               </div>
             </Card>
+
+            {/* Actions Footer */}
+            <div className="flex flex-col sm:flex-row justify-end gap-4 p-6 bg-gray-50/50 rounded-2xl border border-gray-100 border-dashed">
+              {grn.status === "DRAFT" && (
+                <>
+                  <Button
+                    type="primary"
+                    onClick={() => handleUpdateStatus("SUBMITTED")}
+                    disabled={updating}
+                    icon={!updating && <IconSend size={16} />}
+                    className="bg-blue-600 hover:bg-blue-700 border-none rounded-full h-auto py-2.5 px-8 font-bold text-xs uppercase tracking-widest shadow-none"
+                  >
+                    {updating ? <Spin size="small" /> : "Submit for Review"}
+                  </Button>
+                  <Button
+                    danger
+                    onClick={() => handleUpdateStatus("REJECTED")}
+                    disabled={updating}
+                    icon={<IconX size={16} />}
+                    className="rounded-full h-auto py-2.5 px-8 font-bold text-xs uppercase tracking-widest"
+                  >
+                    Cancel GRN
+                  </Button>
+                </>
+              )}
+
+              {grn.status === "SUBMITTED" && currentUser?.permissions?.includes("approve_grn") && (
+                <>
+                  <Button
+                    type="primary"
+                    onClick={() => handleUpdateStatus("APPROVED")}
+                    disabled={updating}
+                    icon={!updating && <IconCheck size={16} />}
+                    className="bg-green-600 hover:bg-green-700 border-none rounded-full h-auto py-2.5 px-8 font-bold text-xs uppercase tracking-widest shadow-none"
+                  >
+                    {updating ? <Spin size="small" /> : "Approve GRN"}
+                  </Button>
+                  <Button
+                    danger
+                    onClick={() => handleUpdateStatus("REJECTED")}
+                    disabled={updating}
+                    icon={<IconX size={16} />}
+                    className="rounded-full h-auto py-2.5 px-8 font-bold text-xs uppercase tracking-widest"
+                  >
+                    Reject GRN
+                  </Button>
+                </>
+              )}
+
+              {(grn.status === "APPROVED" || grn.status === "COMPLETED") && (
+                <div className="flex items-center text-green-700 font-bold text-[10px] uppercase tracking-widest bg-green-50 px-6 py-3 rounded-full border border-green-100">
+                  <IconCheck size={16} className="mr-2" />
+                  GRN Approved & Processed
+                </div>
+              )}
+
+              {grn.status === "REJECTED" && (
+                <div className="flex items-center text-red-700 font-bold text-[10px] uppercase tracking-widest bg-red-50 px-6 py-3 rounded-full border border-red-100">
+                  <IconX size={16} className="mr-2" />
+                  GRN Rejected
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Right Column: Insight */}

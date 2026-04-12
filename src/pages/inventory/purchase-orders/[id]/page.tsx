@@ -8,6 +8,7 @@ import {
   IconSend,
   IconX,
   IconFileInvoice,
+  IconCheck,
 } from "@tabler/icons-react";
 import PageContainer from "@/pages/components/container/PageContainer";
 import toast from "react-hot-toast";
@@ -55,30 +56,28 @@ const ViewPurchaseOrderPage = () => {
   }, [currentUser, poId, fetchPO]);
 
   const handleUpdateStatus = (status: PurchaseOrderStatus) => {
-    const action = status === "SUBMITTED" ? "Submit" : "Cancel Order";
+    const actionMap: Record<string, string> = {
+      SUBMITTED: "Submit for Review",
+      APPROVED: "Approve",
+      REJECTED: po?.status === "DRAFT" ? "Cancel" : "Reject",
+    };
+    
+    const action = actionMap[status] || "Update Status";
     const isDestructive = status === "REJECTED";
 
     showConfirmation({
       title: `${action.toUpperCase()}?`,
-      message: `Are you sure you want to ${action.toLowerCase()}? ${
-        status === "SUBMITTED"
-          ? "This will mark the order as sent."
-          : "This action cannot be undone."
-      }`,
+      message: `Are you sure you want to ${action.toLowerCase()} this order?`,
       variant: isDestructive ? "danger" : "default",
       onSuccess: async () => {
         setUpdating(true);
         try {
-          const fd = new FormData();
-          fd.append("data", JSON.stringify({ status }));
-          await api.put(`/api/v1/erp/procurement/purchase-orders/${poId}`, fd);
-          toast.success(
-            `Order ${status === "SUBMITTED" ? "Submitted" : "Cancelled"}`,
-          );
+          await api.patch(`/api/v1/erp/procurement/purchase-orders/${poId}/status`, { status });
+          toast.success(`Order ${action}ed successfully`);
           fetchPO();
-        } catch (error) {
+        } catch (error: any) {
           console.error(error);
-          toast("Failed to update status");
+          toast.error(error.response?.data?.message || "Failed to update status");
         } finally {
           setUpdating(false);
         }
@@ -236,9 +235,9 @@ const ViewPurchaseOrderPage = () => {
                     onClick={() => handleUpdateStatus("SUBMITTED")}
                     disabled={updating}
                     icon={!updating && <IconSend size={16} />}
-                    className="bg-green-600 hover:bg-green-700 border-none rounded-full h-auto py-2.5 px-8 font-bold text-xs uppercase tracking-widest shadow-none"
+                    className="bg-blue-600 hover:bg-blue-700 border-none rounded-full h-auto py-2.5 px-8 font-bold text-xs uppercase tracking-widest shadow-none"
                   >
-                    {updating ? <Spin size="small" /> : "Submit"}
+                    {updating ? <Spin size="small" /> : "Submit for Review"}
                   </Button>
                   <Button
                     danger
@@ -251,7 +250,31 @@ const ViewPurchaseOrderPage = () => {
                   </Button>
                 </>
               )}
-              {(po.status === "SUBMITTED" || po.status === "APPROVED") && (
+
+              {po.status === "SUBMITTED" && currentUser?.permissions?.includes("approve_po") && (
+                <>
+                  <Button
+                    type="primary"
+                    onClick={() => handleUpdateStatus("APPROVED")}
+                    disabled={updating}
+                    icon={!updating && <IconCheck size={16} />}
+                    className="bg-green-600 hover:bg-green-700 border-none rounded-full h-auto py-2.5 px-8 font-bold text-xs uppercase tracking-widest shadow-none"
+                  >
+                    {updating ? <Spin size="small" /> : "Approve Order"}
+                  </Button>
+                  <Button
+                    danger
+                    onClick={() => handleUpdateStatus("REJECTED")}
+                    disabled={updating}
+                    icon={<IconX size={16} />}
+                    className="rounded-full h-auto py-2.5 px-8 font-bold text-xs uppercase tracking-widest"
+                  >
+                    Reject Order
+                  </Button>
+                </>
+              )}
+
+              {po.status === "APPROVED" && (
                 <Link to={`/inventory/grn/new?poId=${po.id}`}>
                   <Button
                     type="primary"
@@ -271,7 +294,7 @@ const ViewPurchaseOrderPage = () => {
               {po.status === "REJECTED" && (
                 <div className="flex items-center text-red-700 font-bold text-[10px] uppercase tracking-widest bg-red-50 px-6 py-3 rounded-full border border-red-100">
                   <IconX size={16} className="mr-2" />
-                  Order Cancelled
+                  Order Rejected
                 </div>
               )}
             </div>

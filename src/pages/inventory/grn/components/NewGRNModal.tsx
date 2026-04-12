@@ -194,7 +194,7 @@ const NewGRNModal: React.FC<NewGRNModalProps> = ({
     0,
   );
 
-  const handleSave = async () => {
+  const handleSave = async (status: "DRAFT" | "SUBMITTED") => {
     if (!selectedPO) {
       toast("Please select a purchase order");
       return;
@@ -213,9 +213,13 @@ const NewGRNModal: React.FC<NewGRNModalProps> = ({
       }
     }
 
+    const action = status === "DRAFT" ? "Save Draft" : "Submit";
+
     showConfirmation({
-      title: "CONFIRM GRN CREATION?",
-      message: `Are you sure you want to receive these goods? Total Value: Rs ${totalAmount.toLocaleString()}. This will update inventory levels.`,
+      title: `${action.toUpperCase()} GRN?`,
+      message: `Are you sure you want to ${
+        status === "DRAFT" ? "save this draft" : "submit this GRN for review"
+      }? Total Value: Rs ${totalAmount.toLocaleString()}`,
       variant: "default",
       onSuccess: async () => {
         setSaving(true);
@@ -230,6 +234,7 @@ const NewGRNModal: React.FC<NewGRNModalProps> = ({
               supplierName: selectedPO.supplierName,
               receivedDate,
               notes,
+              status,
               items: validItems.map((item) => ({
                 productId: item.productId,
                 productName: item.productName,
@@ -247,7 +252,7 @@ const NewGRNModal: React.FC<NewGRNModalProps> = ({
 
           await api.post("/api/v1/erp/inventory/grn", fd);
 
-          toast.success("GRN CREATED SUCCESSFULLY");
+          toast.success(status === "DRAFT" ? "GRN SAVED AS DRAFT" : "GRN SUBMITTED FOR REVIEW");
           onSuccess();
         } catch (error) {
           console.error(error);
@@ -433,12 +438,20 @@ const NewGRNModal: React.FC<NewGRNModalProps> = ({
                     type="primary"
                     size="large"
                     block
-                    icon={<IconPackage size={18} />}
-                    onClick={handleSave}
+                    onClick={() => handleSave("SUBMITTED")}
                     loading={saving}
-                    className="h-14 rounded-xl font-bold"
+                    className="h-12 rounded-xl font-bold"
                   >
-                    CONFIRM RECEIPT
+                    Submit for Review
+                  </Button>
+                  <Button
+                    size="large"
+                    block
+                    onClick={() => handleSave("DRAFT")}
+                    disabled={saving}
+                    className="h-12 rounded-xl font-bold border-gray-100 bg-gray-50"
+                  >
+                    Save as Draft
                   </Button>
                   <Button
                     block
@@ -451,8 +464,7 @@ const NewGRNModal: React.FC<NewGRNModalProps> = ({
                 </div>
 
                 <div className="p-4 bg-yellow-50 border border-yellow-100 rounded-2xl text-[10px] text-yellow-800 font-bold leading-relaxed">
-                  Receipt will update inventory levels and mark items as
-                  received in the PO.
+                  GRN will be sent for approval. Inventory will only be updated once approved by an authorized manager.
                 </div>
               </div>
             </div>
