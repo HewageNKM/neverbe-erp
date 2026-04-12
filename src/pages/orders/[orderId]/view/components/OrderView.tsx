@@ -19,6 +19,7 @@ import {
 import { useAIChat } from "@/contexts/AIChatContext";
 
 import { OrderExchangeHistory } from "../../components/OrderExchangeHistory";
+import CommunicationHub from "../../components/CommunicationHub";
 
 const { Text } = Typography;
 
@@ -686,6 +687,7 @@ const OrderView = ({ orderId }: { orderId: string }) => {
           )}
         </div>
       </div>
+      <CommunicationHub orderId={orderId} customerName={order?.customer?.name} />
       <OrderExchangeHistory orderId={orderId} />
     </div>
   );
