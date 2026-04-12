@@ -92,7 +92,7 @@ const NewGRNModal: React.FC<NewGRNModalProps> = ({
   const { currentUser } = useAppSelector((state: RootState) => state.authSlice);
 
   const loadPOItems = useCallback(
-    (po: PurchaseOrder, currentStocks: Stock[] = stocks) => {
+    (po: PurchaseOrder, currentStocks: Stock[]) => {
       setSelectedPO(po);
       const defaultStockId =
         po.stockId || (currentStocks.length > 0 ? currentStocks[0].id : "");
@@ -112,38 +112,40 @@ const NewGRNModal: React.FC<NewGRNModalProps> = ({
 
       setItems(grnItems);
     },
-    [stocks],
+    [],
   );
 
-  const fetchData = useCallback(async () => {
-    if (!open) return;
-    setLoading(true);
-    try {
-      const [posRes, stocksRes] = await Promise.all([
-        api.get<PurchaseOrder[]>(
-          "/api/v1/erp/procurement/purchase-orders?pending=true",
-        ),
-        api.get<Stock[]>("/api/v1/erp/master/stocks/dropdown"),
-      ]);
-      setPendingPOs(posRes.data);
-      setStocks(stocksRes.data);
-
-      const targetId = selectedPOId || initialPOId;
-      if (targetId) {
-        const po = posRes.data.find((p) => p.id === targetId);
-        if (po) loadPOItems(po, stocksRes.data);
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to load data");
-    } finally {
-      setLoading(false);
-    }
-  }, [open, selectedPOId, initialPOId]); // Removed loadPOItems from deps
-
   useEffect(() => {
-    if (open && currentUser) fetchData();
-  }, [open, currentUser, fetchData]);
+    if (!open || !currentUser) return;
+
+    const initData = async () => {
+      setLoading(true);
+      try {
+        const [posRes, stocksRes] = await Promise.all([
+          api.get<PurchaseOrder[]>(
+            "/api/v1/erp/procurement/purchase-orders?pending=true",
+          ),
+          api.get<Stock[]>("/api/v1/erp/master/stocks/dropdown"),
+        ]);
+        
+        setPendingPOs(posRes.data);
+        setStocks(stocksRes.data);
+
+        const targetId = selectedPOId || initialPOId;
+        if (targetId) {
+          const po = posRes.data.find((p) => p.id === targetId);
+          if (po) loadPOItems(po, stocksRes.data);
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to load data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initData();
+  }, [open, currentUser, initialPOId]); // Added initialPOId but removed fetchData and state deps
 
   // Reset form when modal closes
   useEffect(() => {
@@ -160,7 +162,7 @@ const NewGRNModal: React.FC<NewGRNModalProps> = ({
     setSelectedPOId(poId);
     const po = pendingPOs.find((p) => p.id === poId);
     if (po) {
-      loadPOItems(po);
+      loadPOItems(po, stocks);
     } else {
       setSelectedPO(null);
       setItems([]);
