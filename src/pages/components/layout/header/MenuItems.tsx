@@ -159,14 +159,14 @@ const Menuitems = [
         href: "/campaign/combos",
         permission: "view_combos",
       },
-      {
-        id: uniqueId(),
-        title: "Communications",
-        href: "/communications",
-        icon: IconMessage2,
-        permission: "view_communications",
-      },
     ],
+  },
+  {
+    id: uniqueId(),
+    title: "Communications",
+    icon: IconMessage2,
+    href: "/communications",
+    permission: "view_communications",
   },
   {
     subHeader: "Website",
