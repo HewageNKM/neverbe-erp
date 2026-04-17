@@ -99,6 +99,9 @@ const OrdersPage = () => {
       from: "all",
       stockId: "all",
       paymentMethod: "all",
+      ...((!isProcessingView && !isPaymentPendingView) 
+        ? { dateRange: [dayjs().subtract(30, 'day'), dayjs()] } 
+        : {})
     };
     form.setFieldsValue(defaultFilters);
     fetchOrders(defaultFilters);
