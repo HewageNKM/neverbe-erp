@@ -99,9 +99,6 @@ const OrdersPage = () => {
       from: "all",
       stockId: "all",
       paymentMethod: "all",
-      ...((!isProcessingView && !isPaymentPendingView) 
-        ? { dateRange: [dayjs().subtract(30, 'day'), dayjs()] } 
-        : {})
     };
     form.setFieldsValue(defaultFilters);
     fetchOrders(defaultFilters);
@@ -255,28 +252,32 @@ const OrdersPage = () => {
       setIsBulkLoading(true);
       const ordersToUpdate = orders.filter(o => selectedRowKeys.includes(o.orderId));
       
-      const promises = ordersToUpdate.map(async (o) => {
+      for (const o of ordersToUpdate) {
         const payload: any = {};
         if (type === "STATUS") {
           payload.status = targetValue;
-          payload.sendNotification = true; // Multilingual notification triggered on backend
+          payload.sendNotification = true;
           
-          // Use inline tracking/courier if available
           if (targetValue === "Completed") {
-            payload.trackingNumber = trackingEdits[o.orderId] || o.trackingNumber;
+            const track = trackingEdits[o.orderId] || o.trackingNumber;
+            if (!track) {
+              toast.error(`Please enter tracking number for order #${o.orderId}`);
+              setIsBulkLoading(false);
+              return;
+            }
+            payload.trackingNumber = track;
             payload.courier = courierEdits[o.orderId] || o.courier || "Domex";
           }
         } else {
           payload.paymentStatus = targetValue;
-          payload.sendNotification = false; // No notification for payment changes
+          payload.sendNotification = false;
         }
 
         const fd = new FormData();
         fd.append("data", JSON.stringify(payload));
-        return api.put(`/api/v1/erp/orders/${o.orderId}`, fd);
-      });
+        await api.put(`/api/v1/erp/orders/${o.orderId}`, fd);
+      }
 
-      await Promise.all(promises);
       toast.success(`Successfully updated ${selectedRowKeys.length} orders to ${targetValue}`);
       setSelectedRowKeys([]);
       fetchOrders();
@@ -487,6 +488,14 @@ const OrdersPage = () => {
                 </Select>
               </Form.Item>
             )}
+            <Form.Item name="from" className="!mb-0 w-32">
+              <Select className="h-10 rounded-xl overflow-hidden" placeholder="Source">
+                <Option value="all">Sources</Option>
+                <Option value="website">Website</Option>
+                <Option value="store">Store</Option>
+                <Option value="admin">Admin</Option>
+              </Select>
+            </Form.Item>
             <Form.Item name="dateRange" className="!mb-0 w-64">
               <RangePicker className="w-full h-10 rounded-xl" />
             </Form.Item>
