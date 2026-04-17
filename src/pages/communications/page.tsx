@@ -263,6 +263,7 @@ const CommunicationsPage = () => {
               showSizeChanger: true,
               pageSizeOptions: ["10", "20", "50", "100"],
             }}
+            scroll={{ x: 'max-content' }}
             onChange={(pag: any) => {
               setPagination(prev => ({
                 ...prev,

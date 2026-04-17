@@ -113,8 +113,8 @@ const CommunicationHub: React.FC<CommunicationHubProps> = ({
     >
       <div className="flex flex-col md:flex-row min-h-[500px]">
         {/* Sidebar: Message Form */}
-        <div className="w-full md:w-1/2 p-8 border-r border-gray-100 bg-gray-50/30">
-          <div className="flex items-center gap-3 mb-8">
+        <div className="w-full md:w-1/2 p-4 md:p-8 border-b md:border-b-0 md:border-r border-gray-100 bg-gray-50/30 overflow-hidden">
+          <div className="flex items-center gap-3 mb-6 md:mb-8">
             <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
               <IconMessage2 size={24} />
             </div>
@@ -200,8 +200,8 @@ const CommunicationHub: React.FC<CommunicationHubProps> = ({
         </div>
 
         {/* Timeline: History */}
-        <div className="w-full md:w-1/2 p-8 bg-white">
-          <div className="flex items-center justify-between mb-8">
+        <div className="w-full md:w-1/2 p-4 md:p-8 bg-white overflow-hidden">
+          <div className="flex items-center justify-between mb-6 md:mb-8">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
                 <IconHistory size={24} />
@@ -228,14 +228,14 @@ const CommunicationHub: React.FC<CommunicationHubProps> = ({
                     color={log.type.includes("sms") ? "green" : "blue"}
                     label={<Text type="secondary" className="text-[10px] uppercase font-bold">{formatDate(log.createdAt)}</Text>}
                   >
-                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 mb-2">
+                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 mb-2 overflow-hidden break-words">
                       <div className="flex justify-between items-start mb-2">
                         <Tag color={log.type.includes("sms") ? "green" : "blue"} className="text-[10px] uppercase font-bold rounded-full px-3">
                           {log.type.toUpperCase()}
                         </Tag>
                         {log.status && <Tag className="text-[10px] uppercase font-bold">{log.status}</Tag>}
                       </div>
-                      <Paragraph className="!mb-0 text-sm text-gray-700 italic">
+                      <Paragraph className="!mb-0 text-sm text-gray-700 italic break-words whitespace-pre-wrap">
                         "{log.content}"
                       </Paragraph>
                       <div className="mt-2 text-[10px] text-gray-400">
