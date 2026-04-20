@@ -113,7 +113,7 @@ const NeuralStrategicHub = () => {
                      "{data.briefing}"
                   </Title>
 
-                  <div className="flex items-center gap-8 pt-4 border-t border-gray-100">
+                  <div className="flex items-start gap-8 pt-4 border-t border-gray-100">
                      <div className="flex flex-col">
                         <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Sales Momentum</span>
                         <span className={`text-xl font-black ${(data?.reality?.comparison?.percentageChange?.revenue || 0) >= 0 ? "text-emerald-600" : "text-rose-500"}`}>
@@ -238,8 +238,8 @@ const NeuralStrategicHub = () => {
          <div className="h-px w-full bg-gray-100/50 my-2" />
 
          {/* 🛰️ LAYER 1: NEURAL FORECAST MATRIX & MONTHLY TARGET */}
-         <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
-            <DashboardCard className="xl:col-span-8 p-10 relative overflow-hidden group rounded-[3rem]">
+         <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+            <DashboardCard className="xl:col-span-8 p-10 relative overflow-hidden group rounded-[3rem] h-fit">
                <div className="absolute top-0 right-0 -mt-24 -mr-24 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl" />
 
                <div className="flex items-center justify-between mb-8">
@@ -373,7 +373,7 @@ const NeuralStrategicHub = () => {
             <div className="xl:col-span-4 flex flex-col gap-6">
                {/* 📊 Monthly Sales Target Gauge */}
                {mt ? (
-                  <DashboardCard className="p-6 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm">
+                  <DashboardCard className="p-6 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm h-fit">
                      <div className="flex items-center gap-3 mb-5">
                         <div className="p-2 bg-indigo-50 rounded-xl text-indigo-600">
                            <IconCalendarStats size={20} />
@@ -420,7 +420,7 @@ const NeuralStrategicHub = () => {
                      </div>
                   </DashboardCard>
                ) : (
-                  <DashboardCard className="p-6 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm">
+                  <DashboardCard className="p-6 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm h-fit">
                      <div className="flex items-center gap-3 mb-5">
                         <div className="p-2 bg-indigo-50 rounded-xl text-indigo-600">
                            <IconCalendarStats size={20} />
