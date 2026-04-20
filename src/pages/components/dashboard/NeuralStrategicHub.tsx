@@ -374,10 +374,10 @@ const NeuralStrategicHub = () => {
             </DashboardCard>
 
             {/* Action Feed Sidebar */}
-            <div className="xl:col-span-4 flex flex-col gap-6">
+            <div className="xl:col-span-4 flex flex-col gap-6 self-start">
                {/* 📊 Monthly Sales Target Gauge */}
                {mt ? (
-                  <DashboardCard className="p-6 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm h-full">
+                  <DashboardCard className="p-6 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm">
                      <div className="flex items-center gap-3 mb-5">
                         <div className="p-2 bg-indigo-50 rounded-xl text-indigo-600">
                            <IconCalendarStats size={20} />
@@ -424,7 +424,7 @@ const NeuralStrategicHub = () => {
                      </div>
                   </DashboardCard>
                ) : (
-                  <DashboardCard className="p-6 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm h-full">
+                  <DashboardCard className="p-6 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm">
                      <div className="flex items-center gap-3 mb-5">
                         <div className="p-2 bg-indigo-50 rounded-xl text-indigo-600">
                            <IconCalendarStats size={20} />
