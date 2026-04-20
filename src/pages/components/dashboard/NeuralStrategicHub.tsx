@@ -240,7 +240,8 @@ const NeuralStrategicHub = () => {
          {/* 🛰️ LAYER 1: NEURAL FORECAST MATRIX & MONTHLY TARGET */}
          <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-stretch">
             <DashboardCard className="xl:col-span-8 p-10 relative overflow-hidden group rounded-[3rem] h-full flex flex-col">
-               <div className="absolute top-0 right-0 -mt-24 -mr-24 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl" />
+               <div className="flex flex-col h-full w-full">
+                  <div className="absolute top-0 right-0 -mt-24 -mr-24 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl" />
 
                <div className="flex items-center justify-between mb-8 shrink-0">
                   <div className="flex items-center gap-4">
@@ -297,6 +298,8 @@ const NeuralStrategicHub = () => {
                            tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }}
                            tickFormatter={(v) => dayjs(v).format('DD MMM')}
                            minTickGap={40}
+                           padding={{ left: 0, right: 0 }}
+                           allowDataOverflow={true}
                         />
                         <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} tickFormatter={(v) => `Rs.${(v / 1000).toFixed(0)}k`} />
                         <Tooltip
@@ -366,6 +369,7 @@ const NeuralStrategicHub = () => {
                         </div>
                      </div>
                   )}
+               </div>
                </div>
             </DashboardCard>
 
