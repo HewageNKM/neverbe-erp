@@ -12,7 +12,6 @@ The system leverages Firebase for robust backend operations and offers a modern,
 - **Document Generation:** Automated, tailored PDF generation for Sales Orders and Purchase Orders using `@react-pdf/renderer`.
 - **Dashboard & Analytics:** Detailed visual insights, reporting, and interactive charts using Recharts and ApexCharts.
 - **Data Export & Processing:** Support for exporting tabular data to Excel (`xlsx`), plus integrated barcode and QR code generation (`bwip-js`).
-- **High-Performance Search:** High-speed, relevant lookups utilizing Algolia Search indexing.
 
 ## 🛠 Tech Stack
 
