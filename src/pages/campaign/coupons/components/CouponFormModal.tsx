@@ -76,6 +76,7 @@ const CouponFormModal: React.FC<Props> = ({
             if (parsed.isValid()) return parsed;
             return null;
           }
+          if (d._seconds) return dayjs(new Date(d._seconds * 1000));
           if (d.seconds) return dayjs(new Date(d.seconds * 1000));
           return dayjs(d);
         };

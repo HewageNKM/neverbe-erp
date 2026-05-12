@@ -2,7 +2,7 @@ import React from "react";
 import { Coupon } from "@/model/Coupon";
 import { Table, Button, Tag, Space, Typography, Tooltip } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { dayjs } from "@/utils/dateUtils";
+import { dayjs, formatSLDate } from "@/utils/dateUtils";
 
 const { Text } = Typography;
 
@@ -68,7 +68,9 @@ const CouponListTable: React.FC<Props> = ({
       dataIndex: "endDate",
       key: "endDate",
       render: (date: any) => {
-        return <Text strong>{date || "-"}</Text>;
+        if (!date) return "-";
+        const formatted = formatSLDate(date);
+        return <Text strong>{formatted || "-"}</Text>;
       },
     },
     {

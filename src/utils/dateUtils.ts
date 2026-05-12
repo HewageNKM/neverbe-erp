@@ -17,7 +17,8 @@ export { dayjs };
 export const parseToDayjs = (val: any) => {
   if (!val) return null;
   
-  // Handle Firestore Timestamp
+  // Handle Firestore Timestamp (serialized and instance)
+  if (val._seconds !== undefined) return dayjs(new Date(val._seconds * 1000));
   if (val.seconds !== undefined) return dayjs(new Date(val.seconds * 1000));
   if (typeof val.toDate === "function") return dayjs(val.toDate());
 

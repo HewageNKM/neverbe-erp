@@ -15,6 +15,7 @@ import { useAppSelector } from "@/lib/hooks";
 import { Brand } from "@/model/Brand";
 import toast from "react-hot-toast";
 import { useConfirmationDialog } from "@/contexts/ConfirmationDialogContext";
+import AIDescriptionTextarea from "@/components/AIDescriptionTextarea";
 import {
   Table,
   Button,

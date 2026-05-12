@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./header/Sidebar";
-import { Layout, Button, Drawer, Badge, Tooltip } from "antd";
+import { Layout, Button, Drawer, Badge, Tooltip, Spin } from "antd";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { IconMenu2, IconBell } from "@tabler/icons-react";
 import AppBreadcrumb from "./AppBreadcrumb";
 import NotificationPanel from "./header/NotificationPanel";
@@ -125,7 +126,17 @@ export default function AppLayout() {
           <div className="w-full mx-auto pb-12">
             <AppBreadcrumb />
             <div className="px-4 xl:px-8">
-              <Outlet />
+              <ErrorBoundary>
+                <Suspense 
+                  fallback={
+                    <div className="flex items-center justify-center min-h-[400px]">
+                      <Spin size="large" tip="Loading page..." />
+                    </div>
+                  }
+                >
+                  <Outlet />
+                </Suspense>
+              </ErrorBoundary>
             </div>
           </div>
         </Content>

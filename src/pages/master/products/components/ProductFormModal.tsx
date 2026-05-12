@@ -267,189 +267,279 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
             </Col>
 
             <Col xs={24} lg={16}>
-              <Row gutter={[16, 16]}>
-                <Col xs={24} md={16}>
-                  <Form.Item
-                    name="name"
-                    label="Product Name"
-                    rules={[{ required: true }]}
-                  >
-                    <Input placeholder="Enter product name..." size="large" />
-                  </Form.Item>
-                </Col>
-                <Col xs={24} md={8}>
-                  <Form.Item
-                    name="weight"
-                    label="Weight (g)"
-                    rules={[{ required: true }]}
-                  >
-                    <InputNumber
-                      style={{ width: "100%" }}
-                      size="large"
-                      min={0}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
+              <div className="bg-white p-4 rounded-xl border border-gray-100 mb-4">
+                <Row gutter={[16, 16]}>
+                  <Col xs={24} md={16}>
+                    <Form.Item
+                      name="name"
+                      label="Product Name"
+                      rules={[{ required: true }]}
+                    >
+                      <Input placeholder="Enter product name..." size="large" />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={8}>
+                    <Form.Item
+                      name="weight"
+                      label="Weight (g)"
+                      rules={[{ required: true }]}
+                    >
+                      <InputNumber
+                        style={{ width: "100%" }}
+                        size="large"
+                        min={0}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
 
-              <div className="flex justify-between items-center mt-4 md:mt-0 mb-2">
-                <span className="text-sm font-semibold text-gray-800">
-                  Description
-                </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500 font-medium">
-                    Add "Non-Genuine" Disclaimer
-                  </span>
-                  <Switch
-                    size="small"
-                    checked={(form.getFieldValue("description") || "").includes(
-                      "high-quality replica product",
-                    )}
-                    onChange={(checked) => {
-                      const currentDesc =
-                        form.getFieldValue("description") || "";
-                      const disclaimer =
-                        '\n\n<u style="color:red; font-weight:bold;">Disclaimer: This is a high-quality replica product, not a genuine original.</u>';
+                <Row gutter={[16, 16]}>
+                  <Col xs={24} md={8}>
+                    <Form.Item
+                      name="category"
+                      label="Category"
+                      rules={[{ required: true }]}
+                    >
+                      <Select showSearch optionFilterProp="children">
+                        {categories.map((c) => (
+                          <Option key={c.id} value={c.label}>
+                            {c.label}
+                          </Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={8}>
+                    <Form.Item
+                      name="brand"
+                      label="Brand"
+                      rules={[{ required: true }]}
+                    >
+                      <Select showSearch optionFilterProp="children">
+                        {brands.map((b) => (
+                          <Option key={b.id} value={b.label}>
+                            {b.label}
+                          </Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={8}>
+                    <Form.Item
+                      name="material"
+                      label="Material"
+                    >
+                      <Select placeholder="Select Material">
+                        <Option value="cotton">Cotton</Option>
+                        <Option value="polyester">Polyester</Option>
+                        <Option value="leather">Leather</Option>
+                        <Option value="denim">Denim</Option>
+                        <Option value="silk">Silk</Option>
+                        <Option value="wool">Wool</Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                </Row>
 
-                      if (checked) {
-                        if (
-                          !currentDesc.includes("high-quality replica product")
-                        ) {
-                          form.setFieldsValue({
-                            description: currentDesc.trim()
-                              ? currentDesc.trim() + disclaimer
-                              : disclaimer.trim(),
-                          });
-                          toast.success("Disclaimer added");
-                        }
-                      } else {
-                        form.setFieldsValue({
-                          description: currentDesc
-                            .replace(disclaimer, "")
-                            .replace(disclaimer.trim(), "")
-                            .trim(),
-                        });
-                        toast.success("Disclaimer removed");
-                      }
-                    }}
-                  />
-                </div>
+                <Row gutter={[16, 16]}>
+                  <Col xs={12}>
+                    <Form.Item
+                      name="listing"
+                      label="Public Listing"
+                      valuePropName="checked"
+                      className="mb-0"
+                    >
+                      <Switch checkedChildren="VISIBLE" unCheckedChildren="HIDDEN" />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={12}>
+                    <Form.Item
+                      name="status"
+                      label="Active Status"
+                      valuePropName="checked"
+                      className="mb-0"
+                    >
+                      <Switch checkedChildren="ACTIVE" unCheckedChildren="INACTIVE" />
+                    </Form.Item>
+                  </Col>
+                </Row>
               </div>
-              <Form.Item name="description" className="mb-6">
-                <MarkdownDescriptionEditor
-                  productContext={{
-                    name: watchedName,
-                    category: watchedCategory,
-                    brand: watchedBrand,
-                    gender: watchedGender,
-                  }}
-                  disabled={saving}
-                />
-              </Form.Item>
-
-              <Row gutter={[16, 16]}>
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    name="category"
-                    label="Category"
-                    rules={[{ required: true }]}
-                  >
-                    <Select showSearch optionFilterProp="children">
-                      {categories.map((c) => (
-                        <Option key={c.id} value={c.label}>
-                          {c.label}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    name="brand"
-                    label="Brand"
-                    rules={[{ required: true }]}
-                  >
-                    <Select showSearch optionFilterProp="children">
-                      {brands.map((b) => (
-                        <Option key={b.id} value={b.label}>
-                          {b.label}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-              </Row>
-
-              <Form.Item
-                name="gender"
-                label="Target Audience"
-                className="mt-4 md:mt-0"
-              >
-                <Select mode="multiple" placeholder="Select Target">
-                  <Option value="men">Men</Option>
-                  <Option value="women">Women</Option>
-                  <Option value="kids">Kids</Option>
-                </Select>
-              </Form.Item>
             </Col>
           </Row>
 
-          <Divider orientation={"left" as any}>Pricing</Divider>
-          <div className="bg-gray-50 p-6 rounded-md border border-gray-100 mb-6">
-            <Row gutter={[16, 16]}>
+          <Divider orientation="left">Categorization Details (Questionnaire)</Divider>
+          <div className="bg-blue-50/30 p-6 rounded-xl border border-blue-100/50 mb-6">
+            <Row gutter={[24, 16]}>
+              <Col xs={24} md={8}>
+                <Form.Item
+                  name="gender"
+                  label="Target Gender"
+                  className="mb-0"
+                >
+                  <Select mode="multiple" placeholder="Select Gender Tags" size="large">
+                    <Option value="men">Men</Option>
+                    <Option value="women">Women</Option>
+                    <Option value="kids">Kids</Option>
+                    <Option value="unisex">Unisex</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={8}>
+                <Form.Item
+                  name="occasion"
+                  label="Occasion"
+                  className="mb-0"
+                >
+                  <Select mode="multiple" placeholder="Select Occasions" size="large">
+                    <Option value="casual">Casual</Option>
+                    <Option value="formal">Formal</Option>
+                    <Option value="sport">Sport</Option>
+                    <Option value="party">Party</Option>
+                    <Option value="office">Office</Option>
+                    <Option value="beach">Beach</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={8}>
+                <Form.Item
+                  name="style"
+                  label="Style"
+                  className="mb-0"
+                >
+                  <Select mode="multiple" placeholder="Select Styles" size="large">
+                    <Option value="modern">Modern</Option>
+                    <Option value="vintage">Vintage</Option>
+                    <Option value="streetwear">Streetwear</Option>
+                    <Option value="minimalist">Minimalist</Option>
+                    <Option value="boho">Boho</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={12}>
+                <Form.Item
+                  name="season"
+                  label="Season"
+                  className="mb-0"
+                >
+                  <Select mode="multiple" placeholder="Select Seasons" size="large">
+                    <Option value="summer">Summer</Option>
+                    <Option value="winter">Winter</Option>
+                    <Option value="spring">Spring</Option>
+                    <Option value="autumn">Autumn</Option>
+                    <Option value="all-season">All Season</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={12}>
+                <Form.Item
+                  name="fit"
+                  label="Fit"
+                  className="mb-0"
+                >
+                  <Select placeholder="Select Fit" size="large">
+                    <Option value="regular">Regular Fit</Option>
+                    <Option value="slim">Slim Fit</Option>
+                    <Option value="oversized">Oversized</Option>
+                    <Option value="loose">Loose Fit</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+          </div>
+
+          <Divider orientation="left">Pricing & Financials</Divider>
+          <div className="bg-gray-50 p-6 rounded-xl border border-gray-100 mb-6">
+            <Row gutter={[24, 16]}>
               <Col xs={24} sm={12} md={6}>
                 <Form.Item
                   name="sellingPrice"
                   label="Selling Price"
                   rules={[{ required: true }]}
                 >
-                  <InputNumber style={{ width: "100%" }} min={0} />
+                  <InputNumber style={{ width: "100%" }} min={0} size="large" prefix="Rs." />
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12} md={6}>
                 <Form.Item name="marketPrice" label="Market Price">
-                  <InputNumber style={{ width: "100%" }} min={0} />
+                  <InputNumber style={{ width: "100%" }} min={0} size="large" prefix="Rs." />
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12} md={6}>
                 <Form.Item name="buyingPrice" label="Cost Price">
-                  <InputNumber style={{ width: "100%" }} min={0} />
+                  <InputNumber style={{ width: "100%" }} min={0} size="large" prefix="Rs." />
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12} md={6}>
                 <Form.Item name="discount" label="Discount %">
-                  <InputNumber style={{ width: "100%" }} min={0} max={100} />
+                  <InputNumber style={{ width: "100%" }} min={0} max={100} size="large" suffix="%" />
                 </Form.Item>
               </Col>
             </Row>
             {discount > 0 && sellingPrice > 0 && (
-              <div className="text-right text-green-600 font-bold">
-                Discounted Price: Rs.{" "}
+              <div className="mt-2 text-right text-green-600 font-bold text-lg">
+                Final Price: Rs.{" "}
                 {Math.round((sellingPrice * (1 - discount / 100)) / 10) * 10}
               </div>
             )}
           </div>
 
-          <Row gutter={[16, 16]}>
-            <Col xs={24} sm={12} md={8}>
-              <Form.Item
-                name="listing"
-                label="Public Listing"
-                valuePropName="checked"
-              >
-                <Switch checkedChildren="VISIBLE" unCheckedChildren="HIDDEN" />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={12} md={8}>
-              <Form.Item
-                name="status"
-                label="Active Status"
-                valuePropName="checked"
-              >
-                <Switch checkedChildren="ACTIVE" unCheckedChildren="INACTIVE" />
-              </Form.Item>
-            </Col>
-          </Row>
+          <Divider orientation="left">Rich Description</Divider>
+          <div className="bg-white p-6 rounded-xl border border-gray-100 mb-6">
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-sm font-semibold text-gray-800 uppercase tracking-wider">
+                Product Content
+              </span>
+              <div className="flex items-center gap-3 bg-red-50 px-3 py-1.5 rounded-full border border-red-100">
+                <span className="text-xs text-red-600 font-bold">
+                  NON-GENUINE DISCLAIMER
+                </span>
+                <Switch
+                  size="small"
+                  checked={(form.getFieldValue("description") || "").includes(
+                    "high-quality replica product",
+                  )}
+                  onChange={(checked) => {
+                    const currentDesc =
+                      form.getFieldValue("description") || "";
+                    const disclaimer =
+                      '\n\n<u style="color:red; font-weight:bold;">Disclaimer: This is a high-quality replica product, not a genuine original.</u>';
+
+                    if (checked) {
+                      if (
+                        !currentDesc.includes("high-quality replica product")
+                      ) {
+                        form.setFieldsValue({
+                          description: currentDesc.trim()
+                            ? currentDesc.trim() + disclaimer
+                            : disclaimer.trim(),
+                        });
+                        toast.success("Disclaimer added");
+                      }
+                    } else {
+                      form.setFieldsValue({
+                        description: currentDesc
+                          .replace(disclaimer, "")
+                          .replace(disclaimer.trim(), "")
+                          .trim(),
+                      });
+                      toast.success("Disclaimer removed");
+                    }
+                  }}
+                />
+              </div>
+            </div>
+            <Form.Item name="description" className="mb-0">
+              <MarkdownDescriptionEditor
+                productContext={{
+                  name: watchedName,
+                  category: watchedCategory,
+                  brand: watchedBrand,
+                  gender: watchedGender,
+                }}
+                disabled={saving}
+              />
+            </Form.Item>
+          </div>
 
           {isEditing && (
             <>

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Card,
@@ -288,7 +290,7 @@ const ProductViewPage = () => {
                     </div>
                     <p className="text-gray-500 text-sm leading-relaxed mb-0">
                       This product currently has {product.totalStock || 0} units across all locations.
-                      The acquisition cost is LKR {product.buyingPrice?.toLocaleString()} with a gross margin of {Math.round(((product.sellingPrice - product.buyingPrice) / product.sellingPrice) * 100)}%.
+                      The acquisition cost is LKR {(product.buyingPrice || 0).toLocaleString()} with a gross margin of {product.sellingPrice > 0 ? Math.round(((product.sellingPrice - (product.buyingPrice || 0)) / product.sellingPrice) * 100) : 0}%.
                     </p>
                   </Col>
                   <Col xs={24} md={10} className="flex items-center">
@@ -301,9 +303,20 @@ const ProductViewPage = () => {
                           <IconCash size={14} className="text-green-600" />
                         </div>
                         <div className="text-xl font-black text-gray-900">
-                          LKR {product.sellingPrice?.toLocaleString()}
+                          LKR {(product.sellingPrice || 0).toLocaleString()}
                         </div>
                       </div>
+                      
+                      {product.marketPrice > 0 && (
+                        <div className="px-4 py-2 bg-amber-50/50 rounded-xl border border-amber-100/50 flex justify-between items-center">
+                          <span className="text-[8px] font-bold text-amber-600 uppercase tracking-widest">
+                            Market Avg
+                          </span>
+                          <span className="text-xs font-bold text-amber-900">
+                            LKR {product.marketPrice.toLocaleString()}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </Col>
                 </Row>
@@ -406,7 +419,6 @@ const ProductViewPage = () => {
                 </div>
               )}
             </div>
-
             <Card
               title={
                 <div className="flex items-center gap-2">
@@ -418,8 +430,15 @@ const ProductViewPage = () => {
               }
               className="border border-gray-100 rounded-2xl bg-white shadow-none"
             >
-              <div className="text-sm text-gray-600 leading-relaxed font-medium">
-                {product.description || (
+              <div 
+                className="text-sm text-gray-600 leading-relaxed font-medium markdown-content"
+                style={{ whiteSpace: "pre-wrap" }}
+              >
+                {product.description ? (
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {product.description}
+                  </ReactMarkdown>
+                ) : (
                   <span className="italic text-gray-400">
                     No description provided.
                   </span>
@@ -430,14 +449,34 @@ const ProductViewPage = () => {
 
           {/* Right Column: Specs & Pricing */}
           <div className="lg:col-span-7 space-y-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
               <Card className="border border-emerald-100 rounded-2xl bg-emerald-50/20 shadow-none">
                 <div className="text-[9px] font-black uppercase text-emerald-700 tracking-[0.2em] mb-2">
-                  Acquisition Cost
+                  Buying Price
                 </div>
                 <div className="text-xl font-black text-emerald-900">
                   <span className="text-xs font-bold mr-1">LKR</span>
-                  {product.buyingPrice?.toLocaleString()}
+                  {(product.buyingPrice || 0).toLocaleString()}
+                </div>
+              </Card>
+
+              <Card className="border border-blue-100 rounded-2xl bg-blue-50/20 shadow-none">
+                <div className="text-[9px] font-black uppercase text-blue-700 tracking-[0.2em] mb-2">
+                  Selling Price
+                </div>
+                <div className="text-xl font-black text-blue-900">
+                  <span className="text-xs font-bold mr-1">LKR</span>
+                  {(product.sellingPrice || 0).toLocaleString()}
+                </div>
+              </Card>
+
+              <Card className="border border-amber-100 rounded-2xl bg-amber-50/20 shadow-none">
+                <div className="text-[9px] font-black uppercase text-amber-700 tracking-[0.2em] mb-2">
+                  Market Price
+                </div>
+                <div className="text-xl font-black text-amber-900">
+                  <span className="text-xs font-bold mr-1">LKR</span>
+                  {(product.marketPrice || 0).toLocaleString()}
                 </div>
               </Card>
 
@@ -446,20 +485,17 @@ const ProductViewPage = () => {
                   Unit Margin
                 </div>
                 <div className="text-xl font-black text-gray-900">
-                  {Math.round(
-                    ((product.sellingPrice - product.buyingPrice) /
-                      product.sellingPrice) *
-                      100
-                  )}
-                  %
+                  {product.sellingPrice > 0 
+                    ? Math.round(((product.sellingPrice - (product.buyingPrice || 0)) / product.sellingPrice) * 100) 
+                    : 0}%
                 </div>
               </Card>
 
-              <Card className="border border-blue-100 rounded-2xl bg-blue-50/20 shadow-none">
-                <div className="text-[9px] font-black uppercase text-blue-700 tracking-[0.2em] mb-2">
-                  Asset Value
+              <Card className="border border-indigo-100 rounded-2xl bg-indigo-50/10 shadow-none">
+                <div className="text-[9px] font-black uppercase text-indigo-700 tracking-[0.2em] mb-2">
+                  Inventory Value
                 </div>
-                <div className="text-xl font-black text-blue-900">
+                <div className="text-xl font-black text-indigo-900">
                   <span className="text-xs font-bold mr-1">LKR</span>
                   {(
                     (product.buyingPrice || 0) * (product.totalStock || 0)
@@ -469,12 +505,12 @@ const ProductViewPage = () => {
 
               <Card className="border border-purple-100 rounded-2xl bg-purple-50/20 shadow-none">
                 <div className="text-[9px] font-black uppercase text-purple-700 tracking-[0.2em] mb-2">
-                  Gross Value
+                  Potential Revenue
                 </div>
                 <div className="text-xl font-black text-purple-900">
                   <span className="text-xs font-bold mr-1">LKR</span>
                   {(
-                    product.sellingPrice * (product.totalStock || 0)
+                    (product.sellingPrice || 0) * (product.totalStock || 0)
                   ).toLocaleString()}
                 </div>
               </Card>
@@ -553,6 +589,18 @@ const ProductViewPage = () => {
       </div>
 
       <style>{`
+        .markdown-content strong {
+          font-weight: 800;
+          color: #111827;
+        }
+        .markdown-content p {
+          margin-bottom: 0.5em;
+        }
+        .markdown-content ul {
+          list-style-type: disc;
+          padding-left: 1.5em;
+          margin-bottom: 1em;
+        }
         .ant-table-thead > tr > th {
           background: #fcfcfc !important;
           color: #9ca3af !important;

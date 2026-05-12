@@ -138,9 +138,12 @@ function Loading() {
   );
 }
 
+import ErrorBoundary from "@/components/ErrorBoundary";
+
 export default function App() {
   return (
-    <Suspense fallback={<Loading />}>
+    <ErrorBoundary>
+      <Suspense fallback={<Loading />}>
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
@@ -302,5 +305,6 @@ export default function App() {
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Suspense>
+    </ErrorBoundary>
   );
 }

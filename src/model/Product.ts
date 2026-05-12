@@ -26,6 +26,11 @@ export interface Product {
 
   tags: string[];
   gender?: string[]; // ["men", "women", "kids"] - can be multiple
+  occasion?: string[];
+  style?: string[];
+  season?: string[];
+  fit?: string;
+  material?: string;
   availableSizes?: string[]; // Denormalized from variants for search
 
   // --- NEW DENORMALIZED FIELDS ---
