@@ -75,7 +75,7 @@ const RecentTransactions = () => {
             <Typography.Text strong>No Recent Orders</Typography.Text>
           </div>
         ) : (
-          <div className="mt-2 px-2">
+          <div className="mt-2 px-2 max-h-[450px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
             <Timeline
               items={orders.map((order) => ({
                 color:
