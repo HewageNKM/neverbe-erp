@@ -37,7 +37,7 @@ export const parseToDayjs = (val: any) => {
   return dayjs(val);
 };
 
-const SL_TIMEZONE = "Asia/Colombo";
+export const SL_TIMEZONE = "Asia/Colombo";
 
 /**
  * Formats any date input into Sri Lanka time (UTC+5:30)
