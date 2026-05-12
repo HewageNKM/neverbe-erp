@@ -23,7 +23,7 @@ const AIDescriptionTextarea: React.FC<AIDescriptionTextareaProps> = ({
   aiContext,
   disabled,
   rows = 4,
-  placeholder = "Write a description, or click ✨ Generate with AI...",
+  placeholder = "Write a description, or click ✨ Smart Generate...",
   className,
 }) => {
   const [generating, setGenerating] = useState(false);
@@ -74,7 +74,7 @@ const AIDescriptionTextarea: React.FC<AIDescriptionTextareaProps> = ({
           className="flex items-center gap-1 text-xs font-black uppercase tracking-widest bg-green-600 hover:bg-green-700 border-none shadow-lg shadow-green-100 h-8 px-4 rounded-xl transition-all hover:scale-[1.02]"
 
         >
-          {generating ? "ORCHESTRATING..." : "Generate with AI"}
+          {generating ? "ORCHESTRATING..." : "Smart Generate"}
         </Button>
       </div>
 

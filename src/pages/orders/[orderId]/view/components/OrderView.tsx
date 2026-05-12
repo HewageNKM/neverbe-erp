@@ -16,7 +16,6 @@ import {
   Button as AntButton,
 } from "antd";
 
-import { useAIChat } from "@/contexts/AIChatContext";
 
 import { OrderExchangeHistory } from "../../components/OrderExchangeHistory";
 import CommunicationHub from "../../components/CommunicationHub";
@@ -24,7 +23,6 @@ import CommunicationHub from "../../components/CommunicationHub";
 const { Text } = Typography;
 
 const OrderView = ({ orderId }: { orderId: string }) => {
-  const { setContextData, setContextTitle, clearContext } = useAIChat();
   const [order, setOrder] = useState<Order | null>(null);
   const [loadingOrder, setLoadingOrder] = useState(true);
   const [trackingHistory, setTrackingHistory] = useState<any[]>([]);
@@ -34,20 +32,10 @@ const OrderView = ({ orderId }: { orderId: string }) => {
   const { currentUser } = useAppSelector((state: any) => state.authSlice);
 
   useEffect(() => {
-    return () => {
-      clearContext();
-    };
-  }, [clearContext]);
-
-  useEffect(() => {
-    if (order) {
-      setContextData(order as any);
-      setContextTitle(`Order #${order.orderId}`);
-      if (order.trackingNumber) {
-        fetchTracking(order.orderId);
-      }
+    if (order && order.trackingNumber) {
+      fetchTracking(order.orderId);
     }
-  }, [order, setContextData, setContextTitle]);
+  }, [order]);
 
   const fetchTracking = async (id: string) => {
     try {

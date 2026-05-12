@@ -129,7 +129,7 @@ const ExpenseSummary = () => {
               </div>
               <div className="text-right mt-2">
                 <Typography.Text strong className="text-sm">
-                  LKR {data.topCategoryAmount.toLocaleString()}
+                  LKR {(data.topCategoryAmount || 0).toLocaleString()}
                 </Typography.Text>
               </div>
             </Card>

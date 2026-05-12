@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 
 export interface Notification {
   id: string;
-  type: "ORDER" | "STOCK" | "SYSTEM" | "AI";
+  type: "ORDER" | "STOCK" | "SYSTEM";
   title: string;
   message: string;
   metadata?: any;

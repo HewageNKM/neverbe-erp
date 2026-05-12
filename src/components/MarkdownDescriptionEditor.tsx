@@ -148,7 +148,7 @@ const MarkdownDescriptionEditor: React.FC<MarkdownDescriptionEditorProps> = ({
           disabled={disabled || generating}
           className="flex items-center gap-1 text-xs font-black uppercase tracking-widest bg-green-600 hover:bg-green-700 border-none shadow-lg shadow-green-100 h-8 px-4 rounded-xl transition-all hover:scale-[1.02]"
         >
-          {generating ? "ORCHESTRATING..." : "Generate with AI"}
+          {generating ? "ORCHESTRATING..." : "Smart Generate"}
         </Button>
       </div>
 
@@ -159,7 +159,7 @@ const MarkdownDescriptionEditor: React.FC<MarkdownDescriptionEditorProps> = ({
         onChange={(e) => onChange?.(e.target.value)}
         disabled={disabled || generating}
         rows={7}
-        placeholder="Write a product description, or click ✨ Generate with AI..."
+        placeholder="Write a product description, or click ✨ Smart Generate..."
         className="w-full px-3 py-2.5 text-sm font-mono text-gray-800 bg-white resize-none outline-none disabled:bg-gray-50 disabled:text-gray-400 placeholder-gray-400"
         style={{
           fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
