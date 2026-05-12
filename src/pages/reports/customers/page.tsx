@@ -82,8 +82,8 @@ const TOOLTIP_STYLE = {
 
 const CustomerAnalyticsPage = () => {
   const [form] = Form.useForm();
-  const [from, setFrom] = useState(() => getNowSL().startOf("month").format("YYYY-MM-DD"));
-  const [to, setTo] = useState(() => getNowSL().format("YYYY-MM-DD"));
+  const [from, setFrom] = useState(() => dayjs().startOf("month").format("YYYY-MM-DD"));
+  const [to, setTo] = useState(() => dayjs().format("YYYY-MM-DD"));
   const [loading, setLoading] = useState(false);
   const [report, setReport] = useState<CustomerAnalytics | null>(null);
 

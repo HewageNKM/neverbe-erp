@@ -14,6 +14,7 @@ import PageContainer from "@/pages/components/container/PageContainer";
 import { useAppSelector } from "@/lib/hooks";
 import toast from "react-hot-toast";
 import { SL_TIMEZONE } from "@/utils/dateUtils";
+import { exportReportPDF } from "@/lib/pdf/exportReportPDF";
 
 export interface LiveStockItem {
   id: string;

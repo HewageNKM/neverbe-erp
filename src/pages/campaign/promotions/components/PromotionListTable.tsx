@@ -2,7 +2,7 @@ import React from "react";
 import { Promotion } from "@/model/Promotion";
 import { Table, Button, Tag, Space, Typography, Tooltip } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { dayjs } from "@/utils/dateUtils";
+import { dayjs, formatSLDate } from "@/utils/dateUtils";
 
 const { Text } = Typography;
 
@@ -51,13 +51,13 @@ const PromotionListTable: React.FC<Props> = ({
             <Space size={4}>
               <Text className="text-xs text-gray-400">Start:</Text>
               <Text strong className="text-xs text-gray-700">
-                {record.startDate || "-"}
+                {formatSLDate(record.startDate) || "-"}
               </Text>
             </Space>
             <Space size={4}>
               <Text className="text-xs text-gray-400">End:</Text>
               <Text strong className="text-xs text-gray-700">
-                {record.endDate || "-"}
+                {formatSLDate(record.endDate) || "-"}
               </Text>
             </Space>
           </div>

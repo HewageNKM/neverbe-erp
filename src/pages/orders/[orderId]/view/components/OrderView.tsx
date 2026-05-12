@@ -342,12 +342,12 @@ const OrderView = ({ orderId }: { orderId: string }) => {
               </Descriptions.Item>
               <Descriptions.Item label="Placement Date">
                 <Text>
-                  {order?.createdAt || "N/A"}
+                  {formatSLDateTime(order?.createdAt) || "N/A"}
                 </Text>
               </Descriptions.Item>
               <Descriptions.Item label="Last Update">
                 <Text>
-                  {order?.updatedAt || "N/A"}
+                  {formatSLDateTime(order?.updatedAt) || "N/A"}
                 </Text>
               </Descriptions.Item>
               <Descriptions.Item label="Order Source">
@@ -412,12 +412,12 @@ const OrderView = ({ orderId }: { orderId: string }) => {
               </Descriptions.Item>
               <Descriptions.Item label="Placement Date">
                 <Text>
-                  {order?.createdAt || "N/A"}
+                  {formatSLDateTime(order?.createdAt) || "N/A"}
                 </Text>
               </Descriptions.Item>
               <Descriptions.Item label="Last Update">
                 <Text>
-                  {order?.updatedAt || "N/A"}
+                  {formatSLDateTime(order?.updatedAt) || "N/A"}
                 </Text>
               </Descriptions.Item>
               <Descriptions.Item label="Order Source">

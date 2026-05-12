@@ -348,6 +348,7 @@ const CategoryPage: React.FC = () => {
                 placeholder="Enter category description..."
                 className="rounded-xl"
                 contextTitle="Category Description"
+                aiContext={{ name: Form.useWatch("name", form) || "" }}
               />
             </Form.Item>
 

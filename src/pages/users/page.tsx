@@ -442,7 +442,7 @@ const UsersPage = () => {
       align: "center",
       render: (_, record) => (
         <span className="text-xs text-gray-500">
-          {record.createdAt}
+          {formatSLDate(record.createdAt)}
         </span>
       ),
     },

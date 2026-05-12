@@ -368,6 +368,7 @@ const BrandPage: React.FC = () => {
                 placeholder="Enter brand details..."
                 className="rounded-xl"
                 contextTitle="Brand Story"
+                aiContext={{ name: Form.useWatch("name", form) || "" }}
               />
             </Form.Item>
 

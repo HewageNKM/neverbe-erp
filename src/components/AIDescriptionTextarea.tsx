@@ -11,6 +11,7 @@ interface AIDescriptionTextareaProps {
   value?: string;
   onChange?: (value: string) => void;
   aiContext: GenerateDescriptionInput;
+  contextTitle?: string;
   disabled?: boolean;
   rows?: number;
   placeholder?: string;

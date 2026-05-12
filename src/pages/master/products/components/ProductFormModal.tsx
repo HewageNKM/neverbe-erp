@@ -367,7 +367,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
             </Col>
           </Row>
 
-          <Divider orientation="left">Categorization Details (Questionnaire)</Divider>
+          <Divider orientation={"left" as any}>Categorization Details (Questionnaire)</Divider>
           <div className="bg-blue-50/30 p-6 rounded-xl border border-blue-100/50 mb-6">
             <Row gutter={[24, 16]}>
               <Col xs={24} md={8}>
@@ -447,7 +447,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
             </Row>
           </div>
 
-          <Divider orientation="left">Pricing & Financials</Divider>
+          <Divider orientation={"left" as any}>Pricing & Financials</Divider>
           <div className="bg-gray-50 p-6 rounded-xl border border-gray-100 mb-6">
             <Row gutter={[24, 16]}>
               <Col xs={24} sm={12} md={6}>
@@ -483,7 +483,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({
             )}
           </div>
 
-          <Divider orientation="left">Rich Description</Divider>
+          <Divider orientation={"left" as any}>Rich Description</Divider>
           <div className="bg-white p-6 rounded-xl border border-gray-100 mb-6">
             <div className="flex justify-between items-center mb-4">
               <span className="text-sm font-semibold text-gray-800 uppercase tracking-wider">

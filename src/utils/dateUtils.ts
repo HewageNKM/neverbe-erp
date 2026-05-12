@@ -72,3 +72,10 @@ export const formatSLDate = (date: any) => formatSL(date, "DD/MM/YYYY");
  * Long time format for Sri Lanka
  */
 export const formatSLDateTime = (date: any) => formatSL(date, "DD/MM/YYYY, hh:mm:ss a");
+
+/**
+ * Returns the current date/time in Sri Lanka formatted
+ */
+export const getNowSL = (format: string = "DD/MM/YYYY, hh:mm:ss a") => {
+  return dayjs().tz(SL_TIMEZONE).format(format);
+};

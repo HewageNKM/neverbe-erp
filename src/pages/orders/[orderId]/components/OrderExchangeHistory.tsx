@@ -3,6 +3,7 @@ import api from "@/lib/api";
 import React, { useEffect, useState } from "react";
 import { ExchangeRecord } from "@/model/ExchangeRecord";
 import { IconRefresh, IconNotes } from "@tabler/icons-react";
+import { formatSLDateTime } from "@/utils/dateUtils";
 
 const { Text, Title } = Typography;
 
@@ -84,7 +85,7 @@ export const OrderExchangeHistory: React.FC<OrderExchangeHistoryProps> = ({
                   Transaction Date
                 </Text>
                 <Text className="font-bold text-sm">
-                  {exchange.createdAt}
+                  {formatSLDateTime(exchange.createdAt)}
                 </Text>
               </div>
 
