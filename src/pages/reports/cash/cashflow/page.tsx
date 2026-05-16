@@ -45,6 +45,7 @@ interface CashFlowSummary {
   totalTransactionFees: number;
   totalExpenses: number;
   totalNetCashFlow: number;
+  byMethod: { method: string; total: number; fee: number; orders: number }[];
   daily: DailyCashFlow[];
 }
 
@@ -173,7 +174,19 @@ const CashFlowPage = () => {
             greenCols: [5],
             redCols: [3, 4],
           },
+          {
+            title: "Payment Method Breakdown",
+            columns: ["Method", "Orders", "Fee (LKR)", "Total Received (LKR)"],
+            rows: (summary?.byMethod || []).map((m) => [
+              m.method,
+              String(m.orders),
+              fmt(m.fee),
+              fmt(m.total),
+            ]),
+            boldCols: [0],
+          },
         ],
+
         filename: `cashflow_${from}_${to}`,
       });
       toast.success("PDF exported!", { id: toastId });
@@ -387,7 +400,7 @@ const CashFlowPage = () => {
 
             {/* Charts */}
             {report.length > 0 && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div
                   id="cashflow-chart-1"
                   className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm"
@@ -489,6 +502,57 @@ const CashFlowPage = () => {
                           name="Expenses"
                           fill="#F59E0B"
                           radius={[3, 3, 0, 0]}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                <div
+                  id="cashflow-chart-3"
+                  className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm"
+                >
+                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">
+                    Payment Method Breakdown
+                  </p>
+                  <div className="h-[280px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        layout="vertical"
+                        data={summary.byMethod}
+                        margin={{ left: 40 }}
+                      >
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          horizontal={true}
+                          vertical={false}
+                          stroke="#F3F4F6"
+                        />
+                        <XAxis
+                          type="number"
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fill: "#9CA3AF", fontSize: 10 }}
+                          tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
+                        />
+                        <YAxis
+                          type="category"
+                          dataKey="method"
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fill: "#4B5563", fontSize: 10, fontWeight: 600 }}
+                          width={100}
+                        />
+                        <RechartTooltip
+                          {...TOOLTIP_STYLE}
+                          formatter={(v: number) => `LKR ${fmt(v)}`}
+                        />
+                        <Bar
+                          dataKey="total"
+                          name="Total Received"
+                          fill="#3B82F6"
+                          radius={[0, 4, 4, 0]}
+                          barSize={20}
                         />
                       </BarChart>
                     </ResponsiveContainer>
